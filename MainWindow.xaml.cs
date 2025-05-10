@@ -37,6 +37,11 @@ namespace PasswordManager
             return "Unknown";
         }
 
-
+        private void SignUpClick(object sender, RoutedEventArgs e)
+        {
+            SignUP signUp = new SignUP();
+            signUp.Show();
+            this.Close();
+        }
     }
 }
