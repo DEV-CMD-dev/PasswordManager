@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PasswordManager"
         mc:Ignorable="d"
         Title="Password Manager" Height="450" Width="400">
-    <Grid>
+    <Grid Background="Blue">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
