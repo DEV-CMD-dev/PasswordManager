@@ -64,7 +64,7 @@
         <Button Grid.Row="4"
             Margin="20,5"
               materialDesign:RippleAssist.Feedback="#DD000000"
-              Content="Login"
+              Content="Register"
               IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
               Style="{StaticResource MaterialDesignRaisedSecondaryButton}"
               ToolTip="Resource name: MaterialDesignRaisedSecondaryButton"/>
