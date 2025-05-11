@@ -30,7 +30,6 @@
 
         <DockPanel Margin="10" Grid.Row="1" >
             <StackPanel>
-                <!--<TextBlock Margin="3" Text="Username"></TextBlock>-->
                 <TextBox
                 VerticalAlignment="Top"
                 materialDesign:HintAssist.Hint="Username"
@@ -41,7 +40,6 @@
 
         <DockPanel Margin="10" Grid.Row="2" >
             <StackPanel>
-                <!--<TextBlock Margin="3"  Text="Password"></TextBlock>-->
                 <PasswordBox
                 VerticalContentAlignment="Bottom"
                 materialDesign:HintAssist.Hint="Password"
