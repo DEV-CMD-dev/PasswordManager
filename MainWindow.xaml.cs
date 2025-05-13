@@ -18,11 +18,9 @@ namespace PasswordManager
     /// </summary>
     public partial class MainWindow : Window
     {
-        string password = "1234567890";
         public MainWindow()
         {
             InitializeComponent();
-            //MessageBox.Show(GetMotherboardSerialNumber());
         }
 
 
@@ -40,8 +38,24 @@ namespace PasswordManager
         private void SignUpClick(object sender, RoutedEventArgs e)
         {
             SignUP signUp = new SignUP();
+
+            signUp.Left = this.Left;
+            signUp.Top = this.Top;
+
             signUp.Show();
             this.Close();
+        }
+
+        private void LoginClick(object sender, RoutedEventArgs e)
+        {
+            bool success = true;
+            if (success)
+            {
+                PasswordManagerWindow passwordManager = new PasswordManagerWindow();
+
+                passwordManager.Show();
+                this.Close();
+            }
         }
     }
 }
