@@ -12,41 +12,23 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace PasswordManager
+namespace Client
 {
     /// <summary>
-    /// Interaction logic for SignUP.xaml
+    /// Interaction logic for Registration.xaml
     /// </summary>
-    public partial class SignUP : Window
+    public partial class Registration : Window
     {
-        public SignUP()
+        public Registration()
         {
             InitializeComponent();
         }
-
-        private void OpenLoginWindow()
+        private void Login(object sender, RoutedEventArgs e)
         {
             MainWindow mainWindow = new MainWindow();
-
-            mainWindow.Left = this.Left;
-            mainWindow.Top = this.Top;
-
             mainWindow.Show();
             this.Close();
         }
-
-        private void Login(object sender, RoutedEventArgs e)
-        {
-            OpenLoginWindow();
-        }
-
-        private void RegistrationButton_Click(object sender, RoutedEventArgs e)
-        {
-            bool succes = true;
-            if (succes)
-            {
-                OpenLoginWindow();
-            }
-        }
+        
     }
 }

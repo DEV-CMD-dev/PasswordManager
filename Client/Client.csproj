@@ -7,25 +7,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="search.png" />
-    <None Remove="user.png" />
-  </ItemGroup>
-
+	
   <ItemGroup>
     <PackageReference Include="MaterialDesignColors" Version="5.2.1" />
     <PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
-    <PackageReference Include="System.Management" Version="9.0.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="search.png" />
-    <Resource Include="user.png" />
+	<PackageReference Include="System.Management" Version="9.0.5" />
   </ItemGroup>
 
 </Project>
