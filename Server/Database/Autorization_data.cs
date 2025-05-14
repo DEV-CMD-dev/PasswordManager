@@ -10,9 +10,10 @@ namespace PasswordManager.Database
     public class Autorization_data
     {
         public int Id { get; set; }
-        [MaxLength(72)]
+        public string Site { get; set; }
+        [MaxLength(40)]
         public string Login { get; set; }
-        [MaxLength(72)]
+        [MaxLength(40)]
         public string Password { get; set; }
         public int AccountId { get; set; }
         // conn
