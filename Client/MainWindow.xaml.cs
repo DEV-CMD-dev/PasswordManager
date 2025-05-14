@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using PasswordManager.Database;
 using System.Text.Json;
 using PasswordManager;
+using System.Net.Http;
 
 namespace Client;
 
@@ -28,6 +29,7 @@ public partial class MainWindow : Window
     const int PORT = 4444;
     string password = "1234567890";
     TcpClient client;
+    //HttpClient client;
     IPEndPoint server;
     public MainWindow()
     {
