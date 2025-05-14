@@ -27,25 +27,29 @@
 
         <Label Content="Authorization" FontSize="24" Margin="25" FontWeight="Bold" HorizontalAlignment="Center" ></Label>
 
-        <DockPanel Margin="10" Grid.Row="1" >
+        <DockPanel Margin="15" Grid.Row="1" >
             <StackPanel>
                 <TextBox
-            Name="tbLogin"
-            VerticalAlignment="Top"
-            materialDesign:HintAssist.Hint="Username"
-            Style="{StaticResource MaterialDesignOutlinedTextBox}">
+                    Name="tbLogin"
+                    VerticalAlignment="Top"
+                    materialDesign:HintAssist.Hint="Username"
+                    materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
+                    MaxLength="40"
+                    Style="{StaticResource MaterialDesignOutlinedTextBox}">
                 </TextBox>
             </StackPanel>
         </DockPanel>
 
-        <DockPanel Margin="10" Grid.Row="2" >
+        <DockPanel Margin="15" Grid.Row="2" >
             <StackPanel>
                 <PasswordBox
-            Name="tbPassword"
-            VerticalContentAlignment="Bottom"
-            materialDesign:HintAssist.Hint="Password"
-            materialDesign:TextFieldAssist.HasClearButton="True"
-            Style="{StaticResource MaterialDesignOutlinedRevealPasswordBox}"/>
+                    Name="tbPassword"
+                    VerticalContentAlignment="Bottom"
+                    materialDesign:HintAssist.Hint="Password"
+                    materialDesign:TextFieldAssist.HasClearButton="True"
+                    materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
+                    MaxLength="40"
+                    Style="{StaticResource MaterialDesignOutlinedRevealPasswordBox}"/>
             </StackPanel>
 
         </DockPanel>

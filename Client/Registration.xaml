@@ -27,42 +27,44 @@
 
         <Label Content="Registration" FontSize="24" Margin="25" FontWeight="Bold" HorizontalAlignment="Center" ></Label>
 
-        <DockPanel Margin="10" Grid.Row="1" >
+        <DockPanel Margin="15" Grid.Row="1" >
             <StackPanel>
-                <!--<TextBlock Margin="3" Text="Username"></TextBlock>-->
                 <TextBox
-            VerticalAlignment="Top"
-            materialDesign:HintAssist.Hint="Username"
-            Style="{StaticResource MaterialDesignOutlinedTextBox}">
+                    VerticalAlignment="Top"
+                    materialDesign:HintAssist.Hint="Username"
+                    materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
+                    MaxLength="40"
+                    Style="{StaticResource MaterialDesignOutlinedTextBox}">
                 </TextBox>
             </StackPanel>
         </DockPanel>
 
-        <DockPanel Margin="10" Grid.Row="2" >
+        <DockPanel Margin="15" Grid.Row="2" >
             <StackPanel>
-                <!--<TextBlock Margin="3"  Text="Password"></TextBlock>-->
                 <PasswordBox
-            VerticalContentAlignment="Bottom"
-            materialDesign:HintAssist.Hint="Password"
-            materialDesign:TextFieldAssist.HasClearButton="True"
-            Style="{StaticResource MaterialDesignOutlinedRevealPasswordBox}"/>
+                    VerticalContentAlignment="Bottom"
+                    materialDesign:HintAssist.Hint="Password"
+                    MaxLength="40"
+                    materialDesign:TextFieldAssist.HasClearButton="True"
+                    Style="{StaticResource MaterialDesignOutlinedRevealPasswordBox}"/>
             </StackPanel>
 
         </DockPanel>
 
-        <DockPanel Margin="10" Grid.Row="3" >
+        <DockPanel Margin="15" Grid.Row="3" >
             <StackPanel>
                 <PasswordBox
-    VerticalContentAlignment="Bottom"
-    materialDesign:HintAssist.Hint="Confirm password"
-    materialDesign:TextFieldAssist.HasClearButton="True"
-    Style="{StaticResource MaterialDesignOutlinedRevealPasswordBox}"/>
+                    VerticalContentAlignment="Bottom"
+                    materialDesign:HintAssist.Hint="Confirm password"
+                    MaxLength="40"
+                    materialDesign:TextFieldAssist.HasClearButton="True"
+                    Style="{StaticResource MaterialDesignOutlinedRevealPasswordBox}"/>
             </StackPanel>
 
         </DockPanel>
 
         <Button Grid.Row="4"
-        Margin="20,5"
+          Margin="20,5"
           materialDesign:RippleAssist.Feedback="#DD000000"
           Content="Register"
           IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
