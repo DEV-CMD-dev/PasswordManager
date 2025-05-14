@@ -6,8 +6,6 @@ using System.Windows;
 using PasswordManager.Database;
 using System.Text.Json;
 
-
-
 namespace Client;
 
 /// <summary>
@@ -18,6 +16,7 @@ public partial class MainWindow : Window
     const string IP = "127.0.0.1";
     const int PORT = 4444;
     TcpClient client;
+    //HttpClient client;
     IPEndPoint server;
     public MainWindow()
     {

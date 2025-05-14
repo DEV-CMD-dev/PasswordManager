@@ -49,7 +49,7 @@ namespace Server
                         string password = account.Password;
                         if (!string.IsNullOrWhiteSpace(email))
                         {
-                            var res = db.Accounts.First(a => a.Email == email && a.Password == password);
+                            var res = db.Accounts.FirstOrDefault(a => a.Email == email && a.Password == password);
                             if (res != null)
                             {
                                 if (res.Is2FAEnabled == true)
@@ -63,10 +63,15 @@ namespace Server
                                     sw.Flush();
                                 }
                             }
+                            else
+                            {
+                                sw.WriteLine("ERROR");
+                                sw.Flush();
+                            }
                         }
                         else if (!string.IsNullOrWhiteSpace(username))
                         {
-                            var res = db.Accounts.First(a => a.Username == username && a.Password == password);
+                            var res = db.Accounts.FirstOrDefault(a => a.Username == username && a.Password == password);
                             if (res != null)
                             {
                                 if (res.Is2FAEnabled == true)
@@ -79,6 +84,11 @@ namespace Server
                                     sw.WriteLine("OK");
                                     sw.Flush();
                                 }
+                            }
+                            else
+                            {
+                                sw.WriteLine("ERROR");
+                                sw.Flush();
                             }
                         }
                     }
