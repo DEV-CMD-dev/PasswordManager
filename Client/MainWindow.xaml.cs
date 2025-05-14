@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using PasswordManager.Database;
 using System.Text.Json;
 using PasswordManager;
+using System.Net.Http;
 
 namespace Client;
 
@@ -27,7 +28,8 @@ public partial class MainWindow : Window
     const string IP = "127.0.0.1";
     const int PORT = 4444;
     string password = "1234567890";
-    TcpClient client;
+    //TcpClient client;
+    HttpClient client;
     IPEndPoint server;
     public MainWindow()
     {
@@ -78,17 +80,21 @@ public partial class MainWindow : Window
                 account.Username = tbLogin.Text;
             }
             account.Password = tbPassword.Password;
-            client = new TcpClient();
-            await client.ConnectAsync(server);
-            var ns = client.GetStream();
-            StreamReader sr = new StreamReader(ns);
-            StreamWriter sw = new StreamWriter(ns);
+            //client = new TcpClient();
+            //await client.ConnectAsync(server);
+            //var ns = client.GetStream();
+            client = new HttpClient();
+            //StreamReader sr = new StreamReader(ns);
+            //StreamWriter sw = new StreamWriter(ns);
             string json = JsonSerializer.Serialize(account);
-            await sw.WriteLineAsync(json);
-            await sw.FlushAsync();
+            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, $"http://{IP}:{PORT}/login");
+            await client.SendAsync(httpRequestMessage);
+            //await sw.WriteLineAsync(json);
+            //await sw.FlushAsync();
             while (true)
             {
-                string response = await sr.ReadLineAsync();
+                //string response = await sr.ReadLineAsync();
+                string response = await client.GetStringAsync($"http://{IP}:{PORT}/login");
                 if (response == "OK")
                 {
                     PasswordManagerWindow passwordManager = new PasswordManagerWindow();
