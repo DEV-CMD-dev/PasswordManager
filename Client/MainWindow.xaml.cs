@@ -73,6 +73,10 @@ public partial class MainWindow : Window
             {
                 account.Email = tbLogin.Text;
             }
+            else
+            {
+                account.Username = tbLogin.Text;
+            }
             account.Password = tbPassword.Password;
             client = new TcpClient();
             await client.ConnectAsync(server);
@@ -81,6 +85,7 @@ public partial class MainWindow : Window
             StreamWriter sw = new StreamWriter(ns);
             string json = JsonSerializer.Serialize(account);
             await sw.WriteLineAsync(json);
+            await sw.FlushAsync();
             while (true)
             {
                 string response = await sr.ReadLineAsync();
@@ -91,7 +96,7 @@ public partial class MainWindow : Window
                     this.Close();
                     break;
                 }
-                else if (response == "OK;2FA")
+                else if (response == "2FA")
                 {
                     // new window
                     break;

@@ -17,8 +17,8 @@ namespace Server
             //Database.EnsureCreated();
             //Database.EnsureDeleted();
         }
-        DbSet<Autorization_data> Autorization_Data { get; set; }
-        DbSet<Account> Accounts { get; set; }
+        public DbSet<Autorization_data> Autorization_Data { get; set; }
+        public DbSet<Account> Accounts { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
