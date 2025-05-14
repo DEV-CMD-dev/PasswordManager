@@ -32,7 +32,7 @@ public class MainViewModel : INotifyPropertyChanged
         FilteredSuggestions.Clear();
 
         foreach (var match in AllOptions
-                     .Where(e => e.StartsWith(AutoSuggestBoxText ?? "", System.StringComparison.InvariantCultureIgnoreCase)))
+                     .Where(e => e.StartsWith(AutoSuggestBoxText ?? "", StringComparison.InvariantCultureIgnoreCase)))
         {
             FilteredSuggestions.Add(match);
         }
