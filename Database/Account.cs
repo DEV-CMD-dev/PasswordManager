@@ -13,5 +13,8 @@ namespace PasswordManager.Database
         public string Password { get; set; }
         public string Email { get; set; }
         public bool Is2FAEnabled { get; set; } = false;
+
+        // conn
+        public ICollection<Autorization_data> ?Autorization_Data { get; set; }
     }
 }

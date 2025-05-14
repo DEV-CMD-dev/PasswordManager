@@ -10,6 +10,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
+using System.Net.Sockets;
+using System.Net;
+using PasswordManager.Database;
 
 namespace PasswordManager
 {
@@ -18,10 +21,15 @@ namespace PasswordManager
     /// </summary>
     public partial class MainWindow : Window
     {
+        const string IP = "127.0.0.1";
+        const int PORT = 4444;
         string password = "1234567890";
+        TcpClient client;
+        IPEndPoint server;
         public MainWindow()
         {
             InitializeComponent();
+            server = new IPEndPoint(IPAddress.Parse(IP), PORT);
             //MessageBox.Show(GetMotherboardSerialNumber());
         }
 
@@ -42,6 +50,36 @@ namespace PasswordManager
             SignUP signUp = new SignUP();
             signUp.Show();
             this.Close();
+        }
+
+        private async void LoginClick(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(tbLogin.Text) || string.IsNullOrWhiteSpace(tbPassword.Password))
+            {
+                MessageBox.Show("Please fill in all fields", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            try
+            {
+                Account account = new Account();
+                if (tbLogin.Text.Contains('@'))
+                {
+                    account.Email = tbLogin.Text;
+                }
+                account.Password = tbPassword.Password;
+                client = new TcpClient();
+                await client.ConnectAsync(server);
+                var ns = client.GetStream();
+                StreamReader sr = new StreamReader(ns);
+                StreamWriter sw = new StreamWriter(ns);
+                sw.WriteLineAsync()
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            
+            
         }
     }
 }

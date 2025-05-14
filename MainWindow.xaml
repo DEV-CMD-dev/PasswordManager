@@ -31,6 +31,7 @@
         <DockPanel Margin="10" Grid.Row="1" >
             <StackPanel>
                 <TextBox
+                Name="tbLogin"
                 VerticalAlignment="Top"
                 materialDesign:HintAssist.Hint="Username"
                 Style="{StaticResource MaterialDesignOutlinedTextBox}">
@@ -41,6 +42,7 @@
         <DockPanel Margin="10" Grid.Row="2" >
             <StackPanel>
                 <PasswordBox
+                Name="tbPassword"
                 VerticalContentAlignment="Bottom"
                 materialDesign:HintAssist.Hint="Password"
                 materialDesign:TextFieldAssist.HasClearButton="True"
@@ -49,13 +51,14 @@
 
         </DockPanel>
 
-        <Button Grid.Row="3"
+        <Button Click="LoginClick"
+            Grid.Row="3"
             Margin="20,5"
-              materialDesign:RippleAssist.Feedback="#DD000000"
-              Content="Login"
-              IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-              Style="{StaticResource MaterialDesignRaisedSecondaryButton}"
-              ToolTip="Resource name: MaterialDesignRaisedSecondaryButton"/>
+            materialDesign:RippleAssist.Feedback="#DD000000"
+            Content="Login"
+            IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+            Style="{StaticResource MaterialDesignRaisedSecondaryButton}"
+            ToolTip="Resource name: MaterialDesignRaisedSecondaryButton"/>
 
         <StackPanel Grid.Row="4" Margin="0,10">
             <TextBlock HorizontalAlignment="Center" >
