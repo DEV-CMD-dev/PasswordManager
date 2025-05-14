@@ -48,6 +48,10 @@ namespace PasswordManager
         private void SignUpClick(object sender, RoutedEventArgs e)
         {
             SignUP signUp = new SignUP();
+
+            signUp.Left = this.Left;
+            signUp.Top = this.Top;
+
             signUp.Show();
             this.Close();
         }
