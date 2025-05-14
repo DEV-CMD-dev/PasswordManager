@@ -1,14 +1,13 @@
-﻿<Window x:Class="PasswordManager.MainWindow"
+﻿<Window x:Class="Client.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PasswordManager"
+        xmlns:local="clr-namespace:Client"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         Style="{StaticResource MaterialDesignWindow}"
         mc:Ignorable="d"
-        Title="Password Manager" Height="450" Width="400" ResizeMode="NoResize">
-
+        Title="Password Manager" Height="450" Width="400">
     <Window.Resources>
         <Style TargetType="TextBlock">
             <Setter Property="FontWeight" Value="Bold"></Setter>
@@ -31,9 +30,10 @@
         <DockPanel Margin="10" Grid.Row="1" >
             <StackPanel>
                 <TextBox
-                VerticalAlignment="Top"
-                materialDesign:HintAssist.Hint="Username"
-                Style="{StaticResource MaterialDesignOutlinedTextBox}">
+            Name="tbLogin"
+            VerticalAlignment="Top"
+            materialDesign:HintAssist.Hint="Username"
+            Style="{StaticResource MaterialDesignOutlinedTextBox}">
                 </TextBox>
             </StackPanel>
         </DockPanel>
@@ -41,35 +41,37 @@
         <DockPanel Margin="10" Grid.Row="2" >
             <StackPanel>
                 <PasswordBox
-                VerticalContentAlignment="Bottom"
-                materialDesign:HintAssist.Hint="Password"
-                materialDesign:TextFieldAssist.HasClearButton="True"
-                Style="{StaticResource MaterialDesignOutlinedRevealPasswordBox}"/>
+            Name="tbPassword"
+            VerticalContentAlignment="Bottom"
+            materialDesign:HintAssist.Hint="Password"
+            materialDesign:TextFieldAssist.HasClearButton="True"
+            Style="{StaticResource MaterialDesignOutlinedRevealPasswordBox}"/>
             </StackPanel>
 
         </DockPanel>
 
-        <Button Grid.Row="3"
-            Margin="20,5"
-              materialDesign:RippleAssist.Feedback="#DD000000"
-              Content="Login"
-              IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-              Style="{StaticResource MaterialDesignRaisedSecondaryButton}"
-              ToolTip="Resource name: MaterialDesignRaisedSecondaryButton" Click="LoginClick"/>
+        <Button Click="LoginClick"
+        Grid.Row="3"
+        Margin="20,5"
+        materialDesign:RippleAssist.Feedback="#DD000000"
+        Content="Login"
+        IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+        Style="{StaticResource MaterialDesignRaisedSecondaryButton}"
+        ToolTip="Resource name: MaterialDesignRaisedSecondaryButton"/>
 
         <StackPanel Grid.Row="4" Margin="0,10">
             <TextBlock HorizontalAlignment="Center" >
-            <Hyperlink FontSize="16" TextDecorations="{x:Null}" Click="SignUpClick">
-                <Label>Don't have an account?</Label>
-            </Hyperlink>
+        <Hyperlink FontSize="16" TextDecorations="{x:Null}" Click="SignUpClick">
+            <Label>Don't have an account?</Label>
+        </Hyperlink>
             </TextBlock>
         </StackPanel>
 
         <StackPanel Grid.Row="5">
             <TextBlock HorizontalAlignment="Center">
-            <Hyperlink FontSize="16" TextDecorations="{x:Null}">
-                <Label>Forgot password?</Label>
-            </Hyperlink>
+        <Hyperlink FontSize="16" TextDecorations="{x:Null}">
+            <Label>Forgot password?</Label>
+        </Hyperlink>
             </TextBlock>
         </StackPanel>
 

@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace PasswordManager
+namespace Client
 {
     /// <summary>
     /// Interaction logic for _1.xaml
