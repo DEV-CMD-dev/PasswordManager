@@ -26,6 +26,10 @@ namespace Client
         private void Login(object sender, RoutedEventArgs e)
         {
             MainWindow mainWindow = new MainWindow();
+
+            mainWindow.Left = this.Left;
+            mainWindow.Top = this.Top;
+
             mainWindow.Show();
             this.Close();
         }

@@ -2,20 +2,11 @@
 using System.Management;
 using System.Net.Sockets;
 using System.Net;
-using System.Security.Principal;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using PasswordManager.Database;
 using System.Text.Json;
-using PasswordManager;
+
+
 
 namespace Client;
 
@@ -26,27 +17,24 @@ public partial class MainWindow : Window
 {
     const string IP = "127.0.0.1";
     const int PORT = 4444;
-    string password = "1234567890";
     TcpClient client;
     IPEndPoint server;
     public MainWindow()
     {
         InitializeComponent();
         server = new IPEndPoint(IPAddress.Parse(IP), PORT);
-        //MessageBox.Show(GetMotherboardSerialNumber());
     }
 
-
-
-    string GetMotherboardSerialNumber()
+    private string GetProcessorId()
     {
-        var searcher = new ManagementObjectSearcher("SELECT SerialNumber FROM Win32_BaseBoard");
+        var searcher = new ManagementObjectSearcher("SELECT ProcessorId FROM Win32_Processor");
         foreach (ManagementObject obj in searcher.Get())
         {
-            return obj["SerialNumber"]?.ToString() ?? "Unknown";
+            return obj["ProcessorId"]?.ToString() ?? "Unknown";
         }
         return "Unknown";
     }
+
 
     private void SignUpClick(object sender, RoutedEventArgs e)
     {
@@ -63,7 +51,7 @@ public partial class MainWindow : Window
     {
         if (string.IsNullOrWhiteSpace(tbLogin.Text) || string.IsNullOrWhiteSpace(tbPassword.Password))
         {
-            MessageBox.Show("Please fill in all fields", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            
             return;
         }
         try
@@ -79,13 +67,18 @@ public partial class MainWindow : Window
             }
             account.Password = tbPassword.Password;
             client = new TcpClient();
+
             await client.ConnectAsync(server);
             var ns = client.GetStream();
+
             StreamReader sr = new StreamReader(ns);
             StreamWriter sw = new StreamWriter(ns);
+
             string json = JsonSerializer.Serialize(account);
+
             await sw.WriteLineAsync(json);
             await sw.FlushAsync();
+
             while (true)
             {
                 string response = await sr.ReadLineAsync();
@@ -93,6 +86,7 @@ public partial class MainWindow : Window
                 {
                     PasswordManagerWindow passwordManager = new PasswordManagerWindow();
                     passwordManager.Show();
+
                     this.Close();
                     break;
                 }
