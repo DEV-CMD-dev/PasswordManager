@@ -142,74 +142,88 @@ namespace Server
 
         public void Login(ServerMessage message, StreamWriter sw)
         {
-            Account account = message.Account;
-            string email = account.Email;
-            string username = account.Username;
-            string password = account.Password;
-            if (!string.IsNullOrWhiteSpace(email))
+            try
             {
-                var res = db.Accounts.FirstOrDefault(a => a.Email == email && a.Password == password);
-                if (res != null)
+                Account account = message.Account;
+                string email = account.Email;
+                string username = account.Username;
+                string password = account.Password;
+                if (!string.IsNullOrWhiteSpace(email))
                 {
-                    if (res.Is2FAEnabled == true)
+                    var res = db.Accounts.FirstOrDefault(a => a.Email == email && a.Password == password);
+                    if (res != null)
                     {
-                        message.Code2FA = new Random().Next(100000, 999999); // send to email, if 2FA enabled
-                        message.Account = res;
-                        message.Message = "2FA";
-                        string json = JsonSerializer.Serialize(message);
-                        sw.WriteLine(json);
-                        sw.Flush();
+                        if (res.Is2FAEnabled == true)
+                        {
+                            message.Code2FA = new Random().Next(100000, 999999); // send to email, if 2FA enabled
+                            message.Account = res;
+                            message.Message = "2FA";
+                            string json = JsonSerializer.Serialize(message);
+                            sw.WriteLine(json);
+                            sw.Flush();
+                        }
+                        else
+                        {
+                            message.Message = "OK";
+                            message.Account = res;
+                            message.Autorization_Data = db.Autorization_Data.Where(a => a.AccountId == res.Id).ToList();
+                            string json = JsonSerializer.Serialize(message);
+                            sw.WriteLine(json);
+                            sw.Flush();
+                        }
                     }
                     else
                     {
-                        message.Message = "OK";
-                        message.Account = res;
-                        message.Autorization_Data = db.Autorization_Data.Where(a => a.AccountId == res.Id).ToList();
+                        message.Message = "ERROR";
                         string json = JsonSerializer.Serialize(message);
                         sw.WriteLine(json);
                         sw.Flush();
                     }
                 }
-                else
+                else if (!string.IsNullOrWhiteSpace(username))
                 {
-                    message.Message = "ERROR";
-                    string json = JsonSerializer.Serialize(message);
-                    sw.WriteLine(json);
-                    sw.Flush();
-                }
-            }
-            else if (!string.IsNullOrWhiteSpace(username))
-            {
-                var res = db.Accounts.FirstOrDefault(a => a.Username == username && a.Password == password);
-                if (res != null)
-                {
-                    if (res.Is2FAEnabled == true)
+                    var res = db.Accounts.FirstOrDefault(a => a.Username == username && a.Password == password);
+                    if (res != null)
                     {
-                        message.Code2FA = new Random().Next(100000, 999999);
-                        message.Account = res;
-                        message.Message = "2FA";
-                        string json = JsonSerializer.Serialize(message);
-                        sw.WriteLine(json);
-                        sw.Flush();
+                        if (res.Is2FAEnabled == true)
+                        {
+                            message.Code2FA = new Random().Next(100000, 999999);
+                            message.Account = res;
+                            message.Message = "2FA";
+                            string json = JsonSerializer.Serialize(message);
+                            sw.WriteLine(json);
+                            sw.Flush();
+                        }
+                        else
+                        {
+                            message.Message = "OK";
+                            message.Account = res;
+                            message.Autorization_Data = db.Autorization_Data.Where(a => a.AccountId == res.Id).ToList();
+                            string json = JsonSerializer.Serialize(message);
+                            sw.WriteLine(json);
+                            sw.Flush();
+                        }
                     }
                     else
                     {
-                        message.Message = "OK";
-                        message.Account = res;
-                        message.Autorization_Data = db.Autorization_Data.Where(a => a.AccountId == res.Id).ToList();
+                        message.Message = "ERROR";
                         string json = JsonSerializer.Serialize(message);
                         sw.WriteLine(json);
                         sw.Flush();
                     }
                 }
-                else
-                {
-                    message.Message = "ERROR";
-                    string json = JsonSerializer.Serialize(message);
-                    sw.WriteLine(json);
-                    sw.Flush();
-                }
             }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error: " + ex.Message + "\nInner: " + ex.InnerException);
+                Console.ResetColor();
+                message.Message = "ERROR";
+                string json = JsonSerializer.Serialize(message);
+                sw.WriteLine(json);
+                sw.Flush();
+            }
+            
         }
 
     }
