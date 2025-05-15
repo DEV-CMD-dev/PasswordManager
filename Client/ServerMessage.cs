@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Server
+namespace Client
 {
     public class ServerMessage
     {
@@ -36,11 +36,11 @@ namespace Server
             return JsonSerializer.Serialize(this);
         }
 
-        public string AddPasswordJson(Autorization_data password)
-        {
-            NewPassword = password;
-            Action = "AddPassword";
-            return JsonSerializer.Serialize(this);
-        }
+        //public string AddPasswordJson(Autorization_data password)
+        //{
+        //    NewPassword = password;
+        //    Action = "AddPassword";
+        //    return JsonSerializer.Serialize(this);
+        //}
     }
 }

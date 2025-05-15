@@ -24,7 +24,7 @@ public partial class MainWindow : Window
         server = new IPEndPoint(IPAddress.Parse(IP), PORT);
     }
 
-    private string GetProcessorId()
+    private string GetProcessorId() // after delete
     {
         var searcher = new ManagementObjectSearcher("SELECT ProcessorId FROM Win32_Processor");
         foreach (ManagementObject obj in searcher.Get())
@@ -73,17 +73,21 @@ public partial class MainWindow : Window
             StreamReader sr = new StreamReader(ns);
             StreamWriter sw = new StreamWriter(ns);
 
-            string json = JsonSerializer.Serialize(account);
+            ServerMessage message = new ServerMessage();
+
+            string json = message.LoginJson(account);
 
             await sw.WriteLineAsync(json);
             await sw.FlushAsync();
 
             while (true)
             {
-                string response = await sr.ReadLineAsync();
+                string responseJson = await sr.ReadLineAsync();
+                message = JsonSerializer.Deserialize<ServerMessage>(responseJson);
+                string response = message.Message;
                 if (response == "OK")
                 {
-                    PasswordManagerWindow passwordManager = new PasswordManagerWindow();
+                    PasswordManagerWindow passwordManager = new PasswordManagerWindow(message, GetProcessorId(), server); // token from file
                     passwordManager.Show();
 
                     this.Close();
@@ -92,6 +96,18 @@ public partial class MainWindow : Window
                 else if (response == "2FA")
                 {
                     // new window
+                    /*if (message.Code2FA == code) // checking valid code
+                    {
+                        PasswordManagerWindow window = new PasswordManagerWindow(message, GetProcessorId());
+                        window.Show();
+                        this.Close();
+                        break;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Invalid 2FA code", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        break;
+                    }*/
                     break;
                 }
                 else if (response == "ERROR")

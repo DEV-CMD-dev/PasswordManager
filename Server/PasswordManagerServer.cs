@@ -41,55 +41,21 @@ namespace Server
                     StreamReader sr = new StreamReader(ns);
                     StreamWriter sw = new StreamWriter(ns);
                     string json = sr.ReadLine();
-                    Account account = JsonSerializer.Deserialize<Account>(json);
-                    if (account != null)
+                    ServerMessage message = JsonSerializer.Deserialize<ServerMessage>(json);
+
+                    if (message != null)
                     {
-                        string email = account.Email;
-                        string username = account.Username;
-                        string password = account.Password;
-                        if (!string.IsNullOrWhiteSpace(email))
+                        if (message.Action == "Login")
                         {
-                            var res = db.Accounts.FirstOrDefault(a => a.Email == email && a.Password == password);
-                            if (res != null)
-                            {
-                                if (res.Is2FAEnabled == true)
-                                {
-                                    sw.WriteLine("2FA");
-                                    sw.Flush();
-                                }
-                                else
-                                {
-                                    sw.WriteLine("OK");
-                                    sw.Flush();
-                                }
-                            }
-                            else
-                            {
-                                sw.WriteLine("ERROR");
-                                sw.Flush();
-                            }
+                            Login(message, sw);
                         }
-                        else if (!string.IsNullOrWhiteSpace(username))
+                        else if (message.Action == "Register")
                         {
-                            var res = db.Accounts.FirstOrDefault(a => a.Username == username && a.Password == password);
-                            if (res != null)
-                            {
-                                if (res.Is2FAEnabled == true)
-                                {
-                                    sw.WriteLine("2FA");
-                                    sw.Flush();
-                                }
-                                else
-                                {
-                                    sw.WriteLine("OK");
-                                    sw.Flush();
-                                }
-                            }
-                            else
-                            {
-                                sw.WriteLine("ERROR");
-                                sw.Flush();
-                            }
+                            Register(message, sw);
+                        }
+                        else if (message.Action == "AddPassword")
+                        {
+                            AddPassword(message, sw);
                         }
                     }
                 }
@@ -101,6 +67,149 @@ namespace Server
                 Console.ResetColor();
             }
             
+        }
+
+        private void AddPassword(ServerMessage message, StreamWriter sw)
+        {
+            try
+            {
+                db.Autorization_Data.Add(message.NewPassword);
+                int res = db.SaveChanges();
+                if (res > 0)
+                {
+                    message.Message = "OK";
+                    message.NewPassword = null; // fix cycles error
+                    message.Autorization_Data = db.Autorization_Data.Where(a => a.AccountId == message.Account.Id).ToList();
+                    string json = JsonSerializer.Serialize(message);
+                    sw.WriteLine(json);
+                    sw.Flush();
+                }
+                else
+                {
+                    message.Message = "ERROR";
+                    string json = JsonSerializer.Serialize(message);
+                    sw.WriteLine(json);
+                    sw.Flush();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error: " + ex.Message + "\nInner: " + ex.InnerException);
+                Console.ResetColor();
+                message.Message = "ERROR";
+                string json = JsonSerializer.Serialize(message);
+                sw.WriteLine(json);
+                sw.Flush();
+            }
+            
+        }
+
+        private void Register(ServerMessage message, StreamWriter sw)
+        {
+            try
+            {
+                Account account = message.Account;
+                db.Accounts.Add(account);
+                int res = db.SaveChanges();
+                if (res > 0)
+                {
+                    message.Message = "OK";
+                    string json = JsonSerializer.Serialize(message);
+                    sw.WriteLine(json);
+                    sw.Flush();
+                }
+                else
+                {
+                    message.Message = "ERROR";
+                    string json = JsonSerializer.Serialize(message);
+                    sw.WriteLine(json);
+                    sw.Flush();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error: " + ex.Message + "\nInner: " + ex.InnerException);
+                Console.ResetColor();
+                message.Message = "ERROR";
+                string json = JsonSerializer.Serialize(message);
+                sw.WriteLine(json);
+                sw.Flush();
+            }
+            
+        }
+
+        public void Login(ServerMessage message, StreamWriter sw)
+        {
+            Account account = message.Account;
+            string email = account.Email;
+            string username = account.Username;
+            string password = account.Password;
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                var res = db.Accounts.FirstOrDefault(a => a.Email == email && a.Password == password);
+                if (res != null)
+                {
+                    if (res.Is2FAEnabled == true)
+                    {
+                        message.Code2FA = new Random().Next(100000, 999999); // send to email, if 2FA enabled
+                        message.Account = res;
+                        message.Message = "2FA";
+                        string json = JsonSerializer.Serialize(message);
+                        sw.WriteLine(json);
+                        sw.Flush();
+                    }
+                    else
+                    {
+                        message.Message = "OK";
+                        message.Account = res;
+                        message.Autorization_Data = db.Autorization_Data.Where(a => a.AccountId == res.Id).ToList();
+                        string json = JsonSerializer.Serialize(message);
+                        sw.WriteLine(json);
+                        sw.Flush();
+                    }
+                }
+                else
+                {
+                    message.Message = "ERROR";
+                    string json = JsonSerializer.Serialize(message);
+                    sw.WriteLine(json);
+                    sw.Flush();
+                }
+            }
+            else if (!string.IsNullOrWhiteSpace(username))
+            {
+                var res = db.Accounts.FirstOrDefault(a => a.Username == username && a.Password == password);
+                if (res != null)
+                {
+                    if (res.Is2FAEnabled == true)
+                    {
+                        message.Code2FA = new Random().Next(100000, 999999);
+                        message.Account = res;
+                        message.Message = "2FA";
+                        string json = JsonSerializer.Serialize(message);
+                        sw.WriteLine(json);
+                        sw.Flush();
+                    }
+                    else
+                    {
+                        message.Message = "OK";
+                        message.Account = res;
+                        message.Autorization_Data = db.Autorization_Data.Where(a => a.AccountId == res.Id).ToList();
+                        string json = JsonSerializer.Serialize(message);
+                        sw.WriteLine(json);
+                        sw.Flush();
+                    }
+                }
+                else
+                {
+                    message.Message = "ERROR";
+                    string json = JsonSerializer.Serialize(message);
+                    sw.WriteLine(json);
+                    sw.Flush();
+                }
+            }
         }
 
     }
