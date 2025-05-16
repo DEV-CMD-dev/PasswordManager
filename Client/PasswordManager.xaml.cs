@@ -185,5 +185,28 @@ namespace Client
             }
         }
 
+        private void DeletePassword(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button == null)
+                return;
+
+            DependencyObject current = button;
+            while (current != null && !(current is ListBoxItem)) 
+                current = VisualTreeHelper.GetParent(current);
+
+            var listBoxItem = current as ListBoxItem;
+            if (listBoxItem == null)
+                return;
+
+            int index = PasswordList.ItemContainerGenerator.IndexFromContainer(listBoxItem);
+
+            if (index >= 0 && index < PasswordList.Items.Count)
+            {
+                PasswordList.Items.RemoveAt(index);
+            }
+        }
+
+
     }
 }
