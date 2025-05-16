@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text.Json;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Client
 {
@@ -28,7 +29,7 @@ namespace Client
         }
         public List<Autorization_data> GetPasswords()
         {
-            var passwordHasher = new PasswordHasher(DescryptionToken);
+            var passwordHasher = new PasswordCryptor(DescryptionToken);
             var passwordsEncrypted = Message.Autorization_Data;
             if (passwordsEncrypted is null) // not have a password
             {
@@ -48,7 +49,7 @@ namespace Client
             return passwordsDecrypted;
         }
 
-        public async void UpdateProfile(ServerMessage message)
+        public void UpdateProfile(ServerMessage message)
         {
             var account = message.Account;
             if (!string.IsNullOrWhiteSpace(account.Username))
@@ -67,7 +68,7 @@ namespace Client
                 MessageBox.Show("Please fill in all fields.");
                 return;
             }
-            var passwordHasher = new PasswordHasher(DescryptionToken);
+            var passwordHasher = new PasswordCryptor(DescryptionToken);
             var encryptedPassword = new Autorization_data
             {
                 Login = passwordHasher.EncryptPassword(login),
@@ -106,6 +107,14 @@ namespace Client
         private void AddPasswordLine(object sender, RoutedEventArgs e)
         {
             PasswordList.Items.Add("");
+        }
+
+        private void CopyToClipboard(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag is string password)
+            {
+                Clipboard.SetText(password);
+            }
         }
     }
 }
