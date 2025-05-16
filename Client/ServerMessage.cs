@@ -29,7 +29,7 @@ namespace Client
             Action = "Login";
             return JsonSerializer.Serialize(this);
         }
-        public string RegisterJson(Account account) // send to login
+        public string RegisterJson(Account account) // send to register
         {
             Account = account;
             Action = "Register";
