@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Timers;
+using System.Windows.Media;
 
 namespace Client
 {
@@ -156,10 +157,33 @@ namespace Client
 
         private void CopyToClipboard(object sender, RoutedEventArgs e)
         {
-            if (sender is Button button && button.Tag is string password)
+            var button = sender as Button;
+            if (button == null)
+                return;
+
+            var grid = VisualTreeHelper.GetParent(button);
+            while (grid != null && !(grid is Grid))
             {
-                Clipboard.SetText(password);
+                grid = VisualTreeHelper.GetParent(grid);
+            }
+
+            if (grid is Grid parentGrid)
+            {
+                foreach (var child in parentGrid.Children)
+                {
+                    if (child is PasswordBox passwordBox)
+                    {
+                        Clipboard.SetText(passwordBox.Password);
+                        break;
+                    }
+                    else if(child is TextBox textBox)
+                    {
+                        Clipboard.SetText(textBox.Text);
+                        break;
+                    }
+                }
             }
         }
+
     }
 }
