@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
+using System.Timers;
 
 namespace Client
 {
@@ -26,7 +27,51 @@ namespace Client
             Server = server;
             //AddPassword(); // for test
             var passwords = GetPasswords(); // for test
+
+            InitializeInactivityTimer();
+            HookUserActivity();
         }
+
+        // timer
+        private System.Timers.Timer inactivityTimer;
+        private readonly TimeSpan timeout = TimeSpan.FromMinutes(2);
+        //private readonly TimeSpan timeout = TimeSpan.FromSeconds(5);
+
+        private void InitializeInactivityTimer()
+        {
+            inactivityTimer = new System.Timers.Timer(timeout.TotalMilliseconds);
+            inactivityTimer.Elapsed += OnInactivityTimeout;
+            inactivityTimer.AutoReset = false;
+            inactivityTimer.Start();
+        }
+
+        private void HookUserActivity()
+        {
+            this.MouseMove += ResetInactivityTimer;
+            this.KeyDown += ResetInactivityTimer;
+        }
+
+        private void ResetInactivityTimer(object sender, EventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+
+        private void OnInactivityTimeout(object sender, ElapsedEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                var mainWindow = new MainWindow();
+
+                mainWindow.Left = this.Left;
+                mainWindow.Top = this.Top;
+
+                this.Close();
+                mainWindow.Show();
+                
+            });
+        }
+
         public List<Autorization_data> GetPasswords()
         {
             var passwordHasher = new PasswordCryptor(DescryptionToken);
