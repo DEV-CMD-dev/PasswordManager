@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text.Json;
 using System.Windows;
+using System.Windows.Controls;
 using System.Timers;
 
 namespace Client
@@ -92,11 +93,18 @@ namespace Client
             }
             return passwordsDecrypted;
         }
-        public async void AddPassword()
+
+        public void UpdateProfile(ServerMessage message)
         {
-            string login = "dfgdfg@gmail.com"; // for test
-            string password = "qwerty"; // for test
-            string site = "https://www.google.com"; // for test
+            var account = message.Account;
+            if (!string.IsNullOrWhiteSpace(account.Username))
+            {
+                Username.Text = account.Username;
+            }
+        }
+
+        public async void AddPassword(string login, string password, string site = "")
+        {
             /*string login = tbLogin.Text;
             string password = tbPassword.Text;
             string site = tbSite.Text;*/
@@ -113,17 +121,21 @@ namespace Client
                 Site = site,
                 AccountId = Message.Account.Id
             };
+
             Message.NewPassword = encryptedPassword;
             Message.Action = "AddPassword";
             Message.Message = "";
+
             var json = JsonSerializer.Serialize(Message);
             TcpClient client = new TcpClient();
             client.Connect(Server);
             var ns = client.GetStream();
             StreamWriter sw = new StreamWriter(ns);
             StreamReader sr = new StreamReader(ns);
+
             await sw.WriteLineAsync(json);
             await sw.FlushAsync();
+
             var responseJson = await sr.ReadLineAsync();
             var responseMessage = JsonSerializer.Deserialize<ServerMessage>(responseJson);
             if (responseMessage.Message == "OK")
@@ -137,5 +149,17 @@ namespace Client
             }
         }
 
+        private void AddPasswordLine(object sender, RoutedEventArgs e)
+        {
+            PasswordList.Items.Add("");
+        }
+
+        private void CopyToClipboard(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag is string password)
+            {
+                Clipboard.SetText(password);
+            }
+        }
     }
 }

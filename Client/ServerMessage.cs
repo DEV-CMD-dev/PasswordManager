@@ -16,6 +16,7 @@ namespace Client
         public List<Autorization_data> Autorization_Data { get; set; }
         public int Code2FA { get; set; }
         public Autorization_data NewPassword { get; set; }
+        
 
         //public ServerMessage()
         //{

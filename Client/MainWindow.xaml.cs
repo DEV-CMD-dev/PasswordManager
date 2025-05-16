@@ -91,6 +91,8 @@ public partial class MainWindow : Window
                     PasswordManagerWindow passwordManager = new PasswordManagerWindow(message, GetProcessorId(), server); // token from file
                     passwordManager.Show();
 
+                    passwordManager.UpdateProfile(message);
+
                     this.Close();
                     break;
                 }
