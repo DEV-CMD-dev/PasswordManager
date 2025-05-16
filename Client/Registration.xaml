@@ -7,7 +7,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         Style="{StaticResource MaterialDesignWindow}"
         mc:Ignorable="d"
-        Title="Password Manager" Height="500" Width="400">
+        Title="Password Manager" Height="550" Width="400">
     <Window.Resources>
         <Style TargetType="TextBlock">
             <Setter Property="FontWeight" Value="Bold"></Setter>
@@ -17,6 +17,7 @@
 
     <Grid >
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
@@ -39,8 +40,23 @@
                 </TextBox>
             </StackPanel>
         </DockPanel>
-
+        
         <DockPanel Margin="15" Grid.Row="2" >
+            <StackPanel>
+                <TextBox
+                    Name="tbEmail"
+                    VerticalAlignment="Top"
+                    materialDesign:HintAssist.Hint="Email"
+                    materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
+                    MaxLength="40"
+                    Style="{StaticResource MaterialDesignOutlinedTextBox}">
+                </TextBox>
+            </StackPanel>
+        </DockPanel>
+
+        
+        
+        <DockPanel Margin="15" Grid.Row="3" >
             <StackPanel>
                 <PasswordBox
                     Name="tbPassword"
@@ -50,10 +66,9 @@
                     materialDesign:TextFieldAssist.HasClearButton="True"
                     Style="{StaticResource MaterialDesignOutlinedRevealPasswordBox}"/>
             </StackPanel>
-
         </DockPanel>
 
-        <DockPanel Margin="15" Grid.Row="3" >
+        <DockPanel Margin="15" Grid.Row="4" >
             <StackPanel>
                 <PasswordBox
                     Name="tbPasswordConfirm"
@@ -67,7 +82,7 @@
         </DockPanel>
 
         <Button Click="Register"
-          Grid.Row="4"
+          Grid.Row="5"
           Margin="20,5"
           materialDesign:RippleAssist.Feedback="#DD000000"
           Content="Register"
@@ -75,7 +90,7 @@
           Style="{StaticResource MaterialDesignRaisedSecondaryButton}"
           ToolTip="Resource name: MaterialDesignRaisedSecondaryButton"/>
 
-        <StackPanel Grid.Row="5" Margin="0,10">
+        <StackPanel Grid.Row="6" Margin="0,10">
             <TextBlock HorizontalAlignment="Center" >
         <Hyperlink FontSize="16" TextDecorations="{x:Null}" Click="Login">
             <Label>Already have an account?</Label>

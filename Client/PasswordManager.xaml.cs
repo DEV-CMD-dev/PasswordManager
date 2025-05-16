@@ -100,7 +100,7 @@ namespace Client
             var account = message.Account;
             if (!string.IsNullOrWhiteSpace(account.Username))
             {
-                Username.Text = account.Username;
+                UsernameData.Text = Username.Text = account.Username;
             }
         }
 
@@ -185,27 +185,34 @@ namespace Client
             }
         }
 
+        //need to fix
         private void DeletePassword(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
-            if (button == null)
-                return;
-
-            DependencyObject current = button;
-            while (current != null && !(current is ListBoxItem)) 
-                current = VisualTreeHelper.GetParent(current);
-
-            var listBoxItem = current as ListBoxItem;
-            if (listBoxItem == null)
-                return;
-
-            int index = PasswordList.ItemContainerGenerator.IndexFromContainer(listBoxItem);
-
-            if (index >= 0 && index < PasswordList.Items.Count)
+            if (sender is Button button && button.DataContext != null)
             {
-                PasswordList.Items.RemoveAt(index);
+                var item = button.DataContext;
+
+                if (PasswordList.ItemsSource is IList<object> sourceList)
+                {
+                    int index = sourceList.IndexOf(item);
+                    if (index >= 0)
+                    {
+                        sourceList.RemoveAt(index);
+                    }
+                }
+                else if (PasswordList.Items.Contains(item))
+                {
+                    PasswordList.Items.Remove(item);
+                }
+                else
+                {
+                    MessageBox.Show("Error deleting password.");
+                }
             }
         }
+
+
+
 
 
     }
