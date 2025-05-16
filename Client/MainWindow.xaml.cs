@@ -22,6 +22,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         server = new IPEndPoint(IPAddress.Parse(IP), PORT);
+
     }
 
     private string GetProcessorId() // after delete
