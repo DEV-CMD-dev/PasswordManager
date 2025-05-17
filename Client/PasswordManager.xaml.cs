@@ -28,6 +28,7 @@ namespace Client
             Server = server;
             //AddPassword("test", "test", "https://google.com"); // for test
             var passwords = GetPasswords(); // for test
+            //AddImage("../../../account(1).png", message); // test
 
             InitializeInactivityTimer();
             HookUserActivity();
@@ -211,6 +212,39 @@ namespace Client
             }
         }
 
+        public async void AddImage(string imagepath, ServerMessage message)
+        {
+            if (Path.Exists(imagepath))
+            {
+                message.Image = File.ReadAllBytes(imagepath);
+                message.FileNameImage = message.Account.Id + Path.GetExtension(imagepath);
+                message.Action = "AddImage";
+                message.Message = "";
+                var json = JsonSerializer.Serialize(message);
+                TcpClient client = new TcpClient();
+                client.Connect(Server);
+                var ns = client.GetStream();
+                StreamWriter sw = new StreamWriter(ns);
+                StreamReader sr = new StreamReader(ns);
+                await sw.WriteLineAsync(json);
+                await sw.FlushAsync();
+                var responseJson = await sr.ReadLineAsync();
+                var responseMessage = JsonSerializer.Deserialize<ServerMessage>(responseJson);
+                if (responseMessage.Message == "OK")
+                {
+                    MessageBox.Show("Image added successfully.");
+                }
+                else
+                {
+                    MessageBox.Show("Error adding image.");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Image not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+        }
 
 
 
