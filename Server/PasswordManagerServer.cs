@@ -57,6 +57,22 @@ namespace Server
                         {
                             AddPassword(message, sw);
                         }
+                        /*else if (message.Action == "UpdateProfile")
+                        {
+                            UpdateProfile(message, sw);
+                        }
+                        else if (message.Action == "GetPasswords")
+                        {
+                            GetPasswords(message, sw);
+                        }
+                        else if (message.Action == "UpdatePassword")
+                        {
+                            UpdatePassword(message, sw);
+                        }*/
+                        else if (message.Action == "AddImage")
+                        {
+                            AddImage(message, sw);
+                        }
                     }
                 }
             }
@@ -67,6 +83,45 @@ namespace Server
                 Console.ResetColor();
             }
             
+        }
+
+        private async void AddImage(ServerMessage message, StreamWriter sw)
+        {
+            const string FOLDER = "../../../Images/";
+            if (!Directory.Exists(FOLDER))
+            {
+                Directory.CreateDirectory(FOLDER);
+            }
+            string path = Path.Combine(FOLDER, message.FileNameImage);
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+            await File.WriteAllBytesAsync(path, message.Image);
+            if (File.Exists(path))
+            {
+                message.Message = "OK";
+                message.Action = "";
+                var accountDb = db.Accounts.FirstOrDefault(a => a.Id == message.Account.Id);
+                if (accountDb != null)
+                {
+                    accountDb.AvatarPath = message.FileNameImage;
+                    db.SaveChanges();
+                    message.Account = accountDb;
+                }
+                //message.Account.AvatarPath = path;
+                string json = JsonSerializer.Serialize(message);
+                await sw.WriteLineAsync(json);
+                await sw.FlushAsync();
+            }
+            else
+            {
+                message.Message = "ERROR";
+                message.Action = "";
+                string json = JsonSerializer.Serialize(message);
+                await sw.WriteLineAsync(json);
+                await sw.FlushAsync();
+            }
         }
 
         private void AddPassword(ServerMessage message, StreamWriter sw)
