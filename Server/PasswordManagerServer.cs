@@ -45,7 +45,7 @@ namespace Server
 
                     if (message != null)
                     {
-                        if (message.Action == "Login")
+                        if (message.Action == "Login") // change to switch (message.Action)
                         {
                             Login(message, sw);
                         }
@@ -64,11 +64,11 @@ namespace Server
                         else if (message.Action == "GetPasswords")
                         {
                             GetPasswords(message, sw);
-                        }
-                        else if (message.Action == "UpdatePassword")
-                        {
-                            UpdatePassword(message, sw);
                         }*/
+                        else if (message.Action == "ChangePassword")
+                        {
+                            ChangePassword(message, sw);
+                        }
                         else if (message.Action == "AddImage")
                         {
                             AddImage(message, sw);
@@ -81,6 +81,35 @@ namespace Server
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error: " + ex.Message);
                 Console.ResetColor();
+            }
+            
+        }
+
+        private async void ChangePassword(ServerMessage message, StreamWriter sw)
+        {
+            try
+            {
+                var accountDb = db.Accounts.FirstOrDefault(a => a.Id == message.Account.Id);
+                if (accountDb != null)
+                {
+                    accountDb.Password = message.Account.Password; // add hash
+                    db.SaveChanges();
+                    message.Message = "OK";
+                    message.Account = accountDb;
+                    string json = JsonSerializer.Serialize(message);
+                    await sw.WriteLineAsync(json);
+                    await sw.FlushAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error: " + ex.Message + "\nInner: " + ex.InnerException);
+                Console.ResetColor();
+                message.Message = "ERROR";
+                string json = JsonSerializer.Serialize(message);
+                await sw.WriteLineAsync(json);
+                await sw.FlushAsync();
             }
             
         }

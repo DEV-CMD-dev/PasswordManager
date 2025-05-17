@@ -29,6 +29,7 @@ namespace Client
             //AddPassword("test", "test", "https://google.com"); // for test
             var passwords = GetPasswords(); // for test
             //AddImage("../../../account(1).png", message); // test
+            //ChangePassword(message, "test"); // test
 
             InitializeInactivityTimer();
             HookUserActivity();
@@ -233,6 +234,8 @@ namespace Client
                 if (responseMessage.Message == "OK")
                 {
                     MessageBox.Show("Image added successfully.");
+                    message = responseMessage;
+                    message.Message = "";
                 }
                 else
                 {
@@ -246,8 +249,81 @@ namespace Client
             }
         }
 
+        public async void ChangePassword(ServerMessage message, string newPassword)
+        {
+            try
+            {
+                message.Action = "ChangePassword";
+                message.Account.Password = newPassword;
+                var json = JsonSerializer.Serialize(message);
+                TcpClient client = new TcpClient();
+                client.Connect(Server);
+                var ns = client.GetStream();
+                StreamWriter sw = new StreamWriter(ns);
+                StreamReader sr = new StreamReader(ns);
+                await sw.WriteLineAsync(json);
+                await sw.FlushAsync();
+                var responseJson = await sr.ReadLineAsync();
+                var responseMessage = JsonSerializer.Deserialize<ServerMessage>(responseJson);
+                if (responseMessage != null)
+                {
+                    if (responseMessage.Message == "OK")
+                    {
+                        MessageBox.Show("Password changed successfully.");
+                        message = responseMessage;
+                        message.Message = "";
+                    }
+                    else
+                    {
+                        MessageBox.Show("Error changing password.");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Error changing password.");
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Error changing password.");
+            }
+            
+        }
 
-
-
+        private void ChangePasswordBtn(object sender, RoutedEventArgs e)
+        {
+            // add checking strength password
+            if (string.IsNullOrWhiteSpace(tbCurrentPassword.Text) || string.IsNullOrWhiteSpace(tbNewPassword.Text) || string.IsNullOrEmpty(tbConfirmPassword.Text))
+            {
+                MessageBox.Show("Please fill in all fields.");
+                return;
+            }
+            if (tbCurrentPassword.Text == tbNewPassword.Text)
+            {
+                MessageBox.Show("Password must be another", "Error", MessageBoxButton.OK, MessageBoxImage.Error); // change to another
+                return;
+            }
+            if (tbCurrentPassword.Text != Message.Account.Password)
+            {
+                MessageBox.Show("Current password is incorrect", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (tbNewPassword.Text != tbConfirmPassword.Text)
+            {
+                MessageBox.Show("Passwords do not match", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (tbNewPassword.Text.Length < 8)
+            {
+                MessageBox.Show("Password must be at least 8 characters long", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (tbNewPassword.Text.Length > 40)
+            {
+                MessageBox.Show("Password must be no more than 40 characters long", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            ChangePassword(Message, tbNewPassword.Text);
+        }
     }
 }
