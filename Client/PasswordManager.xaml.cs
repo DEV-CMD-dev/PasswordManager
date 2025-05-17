@@ -26,7 +26,7 @@ namespace Client
             Message = message;
             DescryptionToken = descryptionToken;
             Server = server;
-            //AddPassword(); // for test
+            //AddPassword("test", "test", "https://google.com"); // for test
             var passwords = GetPasswords(); // for test
 
             InitializeInactivityTimer();
