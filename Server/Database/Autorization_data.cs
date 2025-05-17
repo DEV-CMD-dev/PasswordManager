@@ -14,7 +14,6 @@ namespace PasswordManager.Database
         public string Site { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
-        [JsonIgnore]
         public int AccountId { get; set; }
         // conn
         [JsonIgnore]
