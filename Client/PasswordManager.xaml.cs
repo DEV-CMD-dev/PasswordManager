@@ -8,6 +8,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Timers;
 using System.Windows.Media;
+using Client.UI;
+using MaterialDesignColors;
 
 namespace Client
 {
@@ -16,6 +18,8 @@ namespace Client
     /// </summary>
     public partial class PasswordManagerWindow : Window
     {
+        public IEnumerable<Swatch> ColorList { get; set; } = ThemeHelper.GetAvaliableColors();
+
         public ServerMessage Message { get; set; }
         public string DescryptionToken { get; set; }
         public IPEndPoint Server { get; set; }
@@ -33,6 +37,8 @@ namespace Client
 
             InitializeInactivityTimer();
             HookUserActivity();
+
+            DataContext = this;
         }
 
         // timer
