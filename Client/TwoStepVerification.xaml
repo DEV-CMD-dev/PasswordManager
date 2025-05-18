@@ -18,7 +18,7 @@
         <TextBlock HorizontalAlignment="Center" FontSize="25" FontWeight="Bold" Margin="0,20">2 - Step Verification</TextBlock>
 
         <DockPanel Grid.Row="1" >
-            <Image Margin="30,35,0,30" Width="50" Height="50" Source="/email(2).png"></Image>
+            <Image Margin="30,35,0,30" Width="50" Height="50" Source="/email.png"></Image>
             <TextBlock HorizontalAlignment="Center" FontSize="15" FontWeight="Bold" Margin="30,40,35,20" TextWrapping="Wrap">To confirm your login, enter the 6-digit code sent to your email.</TextBlock>
         </DockPanel>
         

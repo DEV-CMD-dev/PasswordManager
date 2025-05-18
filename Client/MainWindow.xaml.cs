@@ -5,6 +5,8 @@ using System.Net;
 using System.Windows;
 using PasswordManager.Database;
 using System.Text.Json;
+using MaterialDesignThemes.Wpf;
+using System.Windows.Media;
 
 namespace Client;
 
@@ -22,11 +24,9 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         server = new IPEndPoint(IPAddress.Parse(IP), PORT);
-
-        TwoStepVerification codeWindow = new TwoStepVerification();
-        codeWindow.Show();
-
     }
+
+
 
     private string GetProcessorId() // after delete
     {
