@@ -45,7 +45,7 @@ namespace Server
 
                     if (message != null)
                     {
-                        if (message.Action == "Login")
+                        if (message.Action == "Login") // change to switch (message.Action)
                         {
                             Login(message, sw);
                         }
@@ -57,6 +57,22 @@ namespace Server
                         {
                             AddPassword(message, sw);
                         }
+                        /*else if (message.Action == "UpdateProfile")
+                        {
+                            UpdateProfile(message, sw);
+                        }
+                        else if (message.Action == "GetPasswords")
+                        {
+                            GetPasswords(message, sw);
+                        }*/
+                        else if (message.Action == "ChangePassword")
+                        {
+                            ChangePassword(message, sw);
+                        }
+                        else if (message.Action == "AddImage")
+                        {
+                            AddImage(message, sw);
+                        }
                     }
                 }
             }
@@ -67,6 +83,74 @@ namespace Server
                 Console.ResetColor();
             }
             
+        }
+
+        private async void ChangePassword(ServerMessage message, StreamWriter sw)
+        {
+            try
+            {
+                var accountDb = db.Accounts.FirstOrDefault(a => a.Id == message.Account.Id);
+                if (accountDb != null)
+                {
+                    accountDb.Password = message.Account.Password; // add hash
+                    db.SaveChanges();
+                    message.Message = "OK";
+                    message.Account = accountDb;
+                    string json = JsonSerializer.Serialize(message);
+                    await sw.WriteLineAsync(json);
+                    await sw.FlushAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error: " + ex.Message + "\nInner: " + ex.InnerException);
+                Console.ResetColor();
+                message.Message = "ERROR";
+                string json = JsonSerializer.Serialize(message);
+                await sw.WriteLineAsync(json);
+                await sw.FlushAsync();
+            }
+            
+        }
+
+        private async void AddImage(ServerMessage message, StreamWriter sw)
+        {
+            const string FOLDER = "../../../Images/";
+            if (!Directory.Exists(FOLDER))
+            {
+                Directory.CreateDirectory(FOLDER);
+            }
+            string path = Path.Combine(FOLDER, message.FileNameImage);
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+            await File.WriteAllBytesAsync(path, message.Image);
+            if (File.Exists(path))
+            {
+                message.Message = "OK";
+                message.Action = "";
+                var accountDb = db.Accounts.FirstOrDefault(a => a.Id == message.Account.Id);
+                if (accountDb != null)
+                {
+                    accountDb.AvatarPath = message.FileNameImage;
+                    db.SaveChanges();
+                    message.Account = accountDb;
+                }
+                //message.Account.AvatarPath = path;
+                string json = JsonSerializer.Serialize(message);
+                await sw.WriteLineAsync(json);
+                await sw.FlushAsync();
+            }
+            else
+            {
+                message.Message = "ERROR";
+                message.Action = "";
+                string json = JsonSerializer.Serialize(message);
+                await sw.WriteLineAsync(json);
+                await sw.FlushAsync();
+            }
         }
 
         private void AddPassword(ServerMessage message, StreamWriter sw)

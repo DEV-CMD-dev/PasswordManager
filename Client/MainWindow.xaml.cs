@@ -5,6 +5,8 @@ using System.Net;
 using System.Windows;
 using PasswordManager.Database;
 using System.Text.Json;
+using MaterialDesignThemes.Wpf;
+using System.Windows.Media;
 
 namespace Client;
 
@@ -23,6 +25,8 @@ public partial class MainWindow : Window
         InitializeComponent();
         server = new IPEndPoint(IPAddress.Parse(IP), PORT);
     }
+
+
 
     private string GetProcessorId() // after delete
     {
@@ -89,6 +93,8 @@ public partial class MainWindow : Window
                 {
                     PasswordManagerWindow passwordManager = new PasswordManagerWindow(message, GetProcessorId(), server); // token from file
                     passwordManager.Show();
+
+                    passwordManager.UpdateProfile(message);
 
                     this.Close();
                     break;

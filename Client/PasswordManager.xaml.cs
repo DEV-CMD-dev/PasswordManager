@@ -5,6 +5,11 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text.Json;
 using System.Windows;
+using System.Windows.Controls;
+using System.Timers;
+using System.Windows.Media;
+using Client.UI;
+using MaterialDesignColors;
 
 namespace Client
 {
@@ -13,6 +18,8 @@ namespace Client
     /// </summary>
     public partial class PasswordManagerWindow : Window
     {
+        public IEnumerable<Swatch> ColorList { get; set; } = ThemeHelper.GetAvaliableColors();
+
         public ServerMessage Message { get; set; }
         public string DescryptionToken { get; set; }
         public IPEndPoint Server { get; set; }
@@ -23,12 +30,60 @@ namespace Client
             Message = message;
             DescryptionToken = descryptionToken;
             Server = server;
-            //AddPassword(); // for test
+            //AddPassword("test", "test", "https://google.com"); // for test
             var passwords = GetPasswords(); // for test
+            //AddImage("../../../account(1).png", message); // test
+            //ChangePassword(message, "test"); // test
+
+            InitializeInactivityTimer();
+            HookUserActivity();
+
+            DataContext = this;
         }
+
+        // timer
+        private System.Timers.Timer inactivityTimer;
+        private readonly TimeSpan timeout = TimeSpan.FromMinutes(2);
+        //private readonly TimeSpan timeout = TimeSpan.FromSeconds(5);
+
+        private void InitializeInactivityTimer()
+        {
+            inactivityTimer = new System.Timers.Timer(timeout.TotalMilliseconds);
+            inactivityTimer.Elapsed += OnInactivityTimeout;
+            inactivityTimer.AutoReset = false;
+            inactivityTimer.Start();
+        }
+
+        private void HookUserActivity()
+        {
+            this.MouseMove += ResetInactivityTimer;
+            this.KeyDown += ResetInactivityTimer;
+        }
+
+        private void ResetInactivityTimer(object sender, EventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+
+        private void OnInactivityTimeout(object sender, ElapsedEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                var mainWindow = new MainWindow();
+
+                mainWindow.Left = this.Left;
+                mainWindow.Top = this.Top;
+
+                this.Close();
+                mainWindow.Show();
+                
+            });
+        }
+
         public List<Autorization_data> GetPasswords()
         {
-            var passwordHasher = new PasswordHasher(DescryptionToken);
+            var passwordHasher = new PasswordCryptor(DescryptionToken);
             var passwordsEncrypted = Message.Autorization_Data;
             if (passwordsEncrypted is null) // not have a password
             {
@@ -47,11 +102,18 @@ namespace Client
             }
             return passwordsDecrypted;
         }
-        public async void AddPassword()
+
+        public void UpdateProfile(ServerMessage message)
         {
-            string login = "dfgdfg@gmail.com"; // for test
-            string password = "qwerty"; // for test
-            string site = "https://www.google.com"; // for test
+            var account = message.Account;
+            if (!string.IsNullOrWhiteSpace(account.Username))
+            {
+                UsernameData.Text = Username.Text = account.Username;
+            }
+        }
+
+        public async void AddPassword(string login, string password, string site = "")
+        {
             /*string login = tbLogin.Text;
             string password = tbPassword.Text;
             string site = tbSite.Text;*/
@@ -60,7 +122,7 @@ namespace Client
                 MessageBox.Show("Please fill in all fields.");
                 return;
             }
-            var passwordHasher = new PasswordHasher(DescryptionToken);
+            var passwordHasher = new PasswordCryptor(DescryptionToken);
             var encryptedPassword = new Autorization_data
             {
                 Login = passwordHasher.EncryptPassword(login),
@@ -68,17 +130,21 @@ namespace Client
                 Site = site,
                 AccountId = Message.Account.Id
             };
+
             Message.NewPassword = encryptedPassword;
             Message.Action = "AddPassword";
             Message.Message = "";
+
             var json = JsonSerializer.Serialize(Message);
             TcpClient client = new TcpClient();
             client.Connect(Server);
             var ns = client.GetStream();
             StreamWriter sw = new StreamWriter(ns);
             StreamReader sr = new StreamReader(ns);
+
             await sw.WriteLineAsync(json);
             await sw.FlushAsync();
+
             var responseJson = await sr.ReadLineAsync();
             var responseMessage = JsonSerializer.Deserialize<ServerMessage>(responseJson);
             if (responseMessage.Message == "OK")
@@ -92,5 +158,178 @@ namespace Client
             }
         }
 
+        private void AddPasswordLine(object sender, RoutedEventArgs e)
+        {
+            PasswordList.Items.Add("");
+        }
+
+        private void CopyToClipboard(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button == null)
+                return;
+
+            var grid = VisualTreeHelper.GetParent(button);
+            while (grid != null && !(grid is Grid))
+            {
+                grid = VisualTreeHelper.GetParent(grid);
+            }
+
+            if (grid is Grid parentGrid)
+            {
+                foreach (var child in parentGrid.Children)
+                {
+                    if (child is PasswordBox passwordBox)
+                    {
+                        Clipboard.SetText(passwordBox.Password);
+                        break;
+                    }
+                    else if(child is TextBox textBox)
+                    {
+                        Clipboard.SetText(textBox.Text);
+                        break;
+                    }
+                }
+            }
+        }
+
+        //need to fix
+        private void DeletePassword(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.DataContext != null)
+            {
+                var item = button.DataContext;
+
+                if (PasswordList.ItemsSource is IList<object> sourceList)
+                {
+                    int index = sourceList.IndexOf(item);
+                    if (index >= 0)
+                    {
+                        sourceList.RemoveAt(index);
+                    }
+                }
+                else if (PasswordList.Items.Contains(item))
+                {
+                    PasswordList.Items.Remove(item);
+                }
+                else
+                {
+                    MessageBox.Show("Error deleting password.");
+                }
+            }
+        }
+
+        public async void AddImage(string imagepath, ServerMessage message)
+        {
+            if (Path.Exists(imagepath))
+            {
+                message.Image = File.ReadAllBytes(imagepath);
+                message.FileNameImage = message.Account.Id + Path.GetExtension(imagepath);
+                message.Action = "AddImage";
+                message.Message = "";
+                var json = JsonSerializer.Serialize(message);
+                TcpClient client = new TcpClient();
+                client.Connect(Server);
+                var ns = client.GetStream();
+                StreamWriter sw = new StreamWriter(ns);
+                StreamReader sr = new StreamReader(ns);
+                await sw.WriteLineAsync(json);
+                await sw.FlushAsync();
+                var responseJson = await sr.ReadLineAsync();
+                var responseMessage = JsonSerializer.Deserialize<ServerMessage>(responseJson);
+                if (responseMessage.Message == "OK")
+                {
+                    MessageBox.Show("Image added successfully.");
+                    message = responseMessage;
+                    message.Message = "";
+                }
+                else
+                {
+                    MessageBox.Show("Error adding image.");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Image not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+        }
+
+        public async void ChangePassword(ServerMessage message, string newPassword)
+        {
+            try
+            {
+                message.Action = "ChangePassword";
+                message.Account.Password = newPassword;
+                var json = JsonSerializer.Serialize(message);
+                TcpClient client = new TcpClient();
+                client.Connect(Server);
+                var ns = client.GetStream();
+                StreamWriter sw = new StreamWriter(ns);
+                StreamReader sr = new StreamReader(ns);
+                await sw.WriteLineAsync(json);
+                await sw.FlushAsync();
+                var responseJson = await sr.ReadLineAsync();
+                var responseMessage = JsonSerializer.Deserialize<ServerMessage>(responseJson);
+                if (responseMessage != null)
+                {
+                    if (responseMessage.Message == "OK")
+                    {
+                        MessageBox.Show("Password changed successfully.");
+                        message = responseMessage;
+                        message.Message = "";
+                    }
+                    else
+                    {
+                        MessageBox.Show("Error changing password.");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Error changing password.");
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Error changing password.");
+            }
+            
+        }
+
+        private void ChangePasswordBtn(object sender, RoutedEventArgs e)
+        {
+            // add checking strength password
+            if (string.IsNullOrWhiteSpace(tbCurrentPassword.Text) || string.IsNullOrWhiteSpace(tbNewPassword.Text) || string.IsNullOrEmpty(tbConfirmPassword.Text))
+            {
+                MessageBox.Show("Please fill in all fields.");
+                return;
+            }
+            if (tbCurrentPassword.Text == tbNewPassword.Text)
+            {
+                MessageBox.Show("Password must be another", "Error", MessageBoxButton.OK, MessageBoxImage.Error); // change to another
+                return;
+            }
+            if (tbCurrentPassword.Text != Message.Account.Password)
+            {
+                MessageBox.Show("Current password is incorrect", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (tbNewPassword.Text != tbConfirmPassword.Text)
+            {
+                MessageBox.Show("Passwords do not match", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (tbNewPassword.Text.Length < 8)
+            {
+                MessageBox.Show("Password must be at least 8 characters long", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (tbNewPassword.Text.Length > 40)
+            {
+                MessageBox.Show("Password must be no more than 40 characters long", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            ChangePassword(Message, tbNewPassword.Text);
+        }
     }
 }

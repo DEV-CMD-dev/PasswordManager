@@ -69,26 +69,30 @@ namespace Client
             try
             {
                 Account account = new Account();
+
                 account.Username = tbUsername.Text;
                 account.Password = tbPassword.Password;
-                //account.Email = tbEmail.Text; // add field important
-                account.Email = "al@gmail.com"; // add field important
+                account.Email = tbEmail.Text;
+
                 client = new TcpClient();
                 client.Connect(server);
+
                 var ns = client.GetStream();
                 StreamReader sr = new StreamReader(ns);
                 StreamWriter sw = new StreamWriter(ns);
                 ServerMessage message = new ServerMessage();
                 string json = message.RegisterJson(account);
+
                 await sw.WriteLineAsync(json);
                 await sw.FlushAsync();
+
                 string responseJson = await sr.ReadLineAsync();
                 message = JsonSerializer.Deserialize<ServerMessage>(responseJson);
                 string response = message.Message;
                 if (response == "OK")
                 {
                     MessageBox.Show("Registration successful");
-                    PasswordManagerWindow mainWindow = new PasswordManagerWindow(message, GetProcessorId(), server);
+                    MainWindow mainWindow = new MainWindow();
                     mainWindow.Left = this.Left;
                     mainWindow.Top = this.Top;
                     mainWindow.Show();

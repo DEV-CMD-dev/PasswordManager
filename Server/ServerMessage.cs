@@ -14,6 +14,9 @@ namespace Server
         public string Action { get; set; }
         public string Message { get; set; }
         public List<Autorization_data> Autorization_Data { get; set; }
+        public byte[] Image { get; set; }
+        public string FileNameImage { get; set; }
+
         public int Code2FA { get; set; }
         public Autorization_data NewPassword { get; set; }
 
