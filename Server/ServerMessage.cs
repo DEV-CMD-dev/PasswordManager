@@ -39,11 +39,11 @@ namespace Server
             return JsonSerializer.Serialize(this);
         }
 
-        public string AddPasswordJson(Autorization_data password)
-        {
-            NewPassword = password;
-            Action = "AddPassword";
-            return JsonSerializer.Serialize(this);
-        }
+        //public string AddPasswordJson(Autorization_data password)
+        //{
+        //    NewPassword = password;
+        //    Action = "AddPassword";
+        //    return JsonSerializer.Serialize(this);
+        //}
     }
 }

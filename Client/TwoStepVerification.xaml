@@ -25,6 +25,7 @@
         <StackPanel Grid.Row="2" HorizontalAlignment="Center" MinWidth="300">
             <TextBlock Margin="5" FontWeight="Bold"> 6 - Digit verification code:</TextBlock>
             <TextBox
+                 Name="tbCode"
                  MaxLength="6"
                  MaxWidth="400"
                  VerticalAlignment="Top"
@@ -33,6 +34,7 @@
                  TextWrapping="Wrap"/>
 
             <Button
+             Click="Confirm2FACode"
              materialDesign:ButtonAssist.CornerRadius="10"
              Style="{StaticResource MaterialDesignRaisedButton}"
              ToolTip="MaterialDesignRaisedButton with Round Corners"
@@ -42,7 +44,7 @@
 
             <TextBlock HorizontalAlignment="Center">
                 <Label>Didn't receive the code? </Label>
-                <Label VerticalAlignment="Center"><Hyperlink>Send again</Hyperlink></Label>
+                <Label VerticalAlignment="Center"><Hyperlink Click="SendAgain">Send again</Hyperlink></Label>
             </TextBlock>
         </StackPanel>
         

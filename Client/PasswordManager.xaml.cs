@@ -30,10 +30,15 @@ namespace Client
             Message = message;
             DescryptionToken = descryptionToken;
             Server = server;
+            if (message.Account.Is2FAEnabled)
+            {
+                cb2FA.IsChecked = true;
+            }
             //AddPassword("test", "test", "https://google.com"); // for test
             var passwords = GetPasswords(); // for test
+            UpdateProfile();
             //AddImage("../../../account(1).png", message); // test
-            //ChangePassword(message, "test"); // test
+            ChangePassword(message, "test"); // test
 
             InitializeInactivityTimer();
             HookUserActivity();
@@ -81,11 +86,35 @@ namespace Client
             });
         }
 
+        public async Task<List<Autorization_data>> GetPasswordsAsync()
+        {
+            return Task.Run(() => GetPasswords()).Result;
+        }
+
         public List<Autorization_data> GetPasswords()
         {
+            // get passwords from db
+            Message.Action = "GetPasswords";
+            var json = JsonSerializer.Serialize(Message);
+            TcpClient client = new TcpClient();
+            client.Connect(Server);
+            var ns = client.GetStream();
+            StreamWriter sw = new StreamWriter(ns);
+            StreamReader sr = new StreamReader(ns);
+            sw.WriteLine(json);
+            sw.Flush();
+            var responseJson = sr.ReadLine();
+            var responseMessage = JsonSerializer.Deserialize<ServerMessage>(responseJson);
+            if (responseMessage == null || responseMessage.Message != "OK")
+            {
+                MessageBox.Show("Error getting passwords.");
+                return new List<Autorization_data>();
+            }
+            Message = responseMessage;
+            // decrypt passwords
             var passwordHasher = new PasswordCryptor(DescryptionToken);
             var passwordsEncrypted = Message.Autorization_Data;
-            if (passwordsEncrypted is null) // not have a password
+            if (passwordsEncrypted is null) // not have a passwords
             {
                 return new List<Autorization_data>();
             }
@@ -103,9 +132,9 @@ namespace Client
             return passwordsDecrypted;
         }
 
-        public void UpdateProfile(ServerMessage message)
+        public void UpdateProfile()
         {
-            var account = message.Account;
+            var account = Message.Account;
             if (!string.IsNullOrWhiteSpace(account.Username))
             {
                 UsernameData.Text = Username.Text = account.Username;
@@ -260,7 +289,7 @@ namespace Client
             try
             {
                 message.Action = "ChangePassword";
-                message.Account.Password = newPassword;
+                message.Account.Password = PasswordHasher.HashPassword(newPassword);
                 var json = JsonSerializer.Serialize(message);
                 TcpClient client = new TcpClient();
                 client.Connect(Server);
@@ -330,6 +359,52 @@ namespace Client
                 return;
             }
             ChangePassword(Message, tbNewPassword.Text);
+        }
+
+        private async void Update2FAStatus(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (cb2FA.IsChecked == true)
+                {
+                    Message.Account.Is2FAEnabled = true;
+                }
+                else
+                {
+                    Message.Account.Is2FAEnabled = false;
+                }
+                Message.Action = "UpdateProfile";
+                var json = JsonSerializer.Serialize(Message);
+                TcpClient client = new TcpClient();
+                client.Connect(Server);
+                var ns = client.GetStream();
+                StreamWriter sw = new StreamWriter(ns);
+                StreamReader sr = new StreamReader(ns);
+                await sw.WriteLineAsync(json);
+                await sw.FlushAsync();
+                var responseJson = await sr.ReadLineAsync();
+                var responseMessage = JsonSerializer.Deserialize<ServerMessage>(responseJson);
+                if (responseMessage != null)
+                {
+                    if (responseMessage.Message == "OK")
+                    {
+                        Message = responseMessage;
+                        Message.Message = "";
+                    }
+                    else
+                    {
+                        MessageBox.Show("Error change option 2FA.");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Error change option 2FA.");
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Error change option 2FA.");
+            }
         }
     }
 }
