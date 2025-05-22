@@ -27,6 +27,7 @@ namespace Server
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.UseCollation("SQL_Latin1_General_CP1_CS_AS");
             modelBuilder.Entity<Autorization_data>()
                 .HasOne(a => a.Account)
                 .WithMany(a => a.Autorization_Data)

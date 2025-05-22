@@ -7,6 +7,7 @@ using PasswordManager.Database;
 using System.Text.Json;
 using MaterialDesignThemes.Wpf;
 using System.Windows.Media;
+using Client.Security;
 
 namespace Client;
 
@@ -68,7 +69,7 @@ public partial class MainWindow : Window
             {
                 account.Username = tbLogin.Text;
             }
-            account.Password = tbPassword.Password;
+            account.Password = PasswordHasher.HashPassword(tbPassword.Password);
             client = new TcpClient();
 
             await client.ConnectAsync(server);
@@ -94,7 +95,7 @@ public partial class MainWindow : Window
                     PasswordManagerWindow passwordManager = new PasswordManagerWindow(message, GetProcessorId(), server); // token from file
                     passwordManager.Show();
 
-                    passwordManager.UpdateProfile(message);
+                    //passwordManager.UpdateProfile(message);
 
                     this.Close();
                     break;
@@ -102,6 +103,11 @@ public partial class MainWindow : Window
                 else if (response == "2FA")
                 {
                     // new window
+                    TwoStepVerification window = new TwoStepVerification(message, server, GetProcessorId());
+                    window.Left = this.Left;
+                    window.Top = this.Top;
+                    window.Show();
+                    this.Close();
                     /*if (message.Code2FA == code) // checking valid code
                     {
                         PasswordManagerWindow window = new PasswordManagerWindow(message, GetProcessorId());

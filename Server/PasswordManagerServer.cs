@@ -1,10 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using PasswordManager.Database;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
@@ -19,11 +21,13 @@ namespace Server
         IPEndPoint server;
         TcpListener listener;
         PasswordManager_db db;
+        List<ServerMessage> Waiting2FA;
         public PasswordManagerServer()
         {
             server = new IPEndPoint(IPAddress.Parse(IP), PORT);
             listener = new TcpListener(server);
             db = new PasswordManager_db();
+            Waiting2FA = new List<ServerMessage>();
         }
         public async void Start()
         {
@@ -57,14 +61,22 @@ namespace Server
                         {
                             AddPassword(message, sw);
                         }
-                        /*else if (message.Action == "UpdateProfile")
+                        else if (message.Action == "UpdateProfile")
                         {
                             UpdateProfile(message, sw);
+                        }
+                        else if (message.Action == "2FAPassword")
+                        {
+                            Check2FAPassword(message, sw);
+                        }
+                        else if (message.Action == "2FASendAgain")
+                        {
+                            SendAgain2FAPassword(message, sw);
                         }
                         else if (message.Action == "GetPasswords")
                         {
                             GetPasswords(message, sw);
-                        }*/
+                        }
                         else if (message.Action == "ChangePassword")
                         {
                             ChangePassword(message, sw);
@@ -85,6 +97,152 @@ namespace Server
             
         }
 
+        private async void GetPasswords(ServerMessage message, StreamWriter sw)
+        {
+            try
+            {
+                message.Autorization_Data = db.Autorization_Data.Where(a => a.AccountId == message.Account.Id).ToList();
+                if (message.Autorization_Data != null)
+                {
+                    message.Message = "OK";
+                    string json = JsonSerializer.Serialize(message);
+                    await sw.WriteLineAsync(json);
+                    await sw.FlushAsync();
+                }
+                else
+                {
+                    message.Message = "ERROR";
+                    string json = JsonSerializer.Serialize(message);
+                    await sw.WriteLineAsync(json);
+                    await sw.FlushAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error: " + ex.Message + "\nInner: " + ex.InnerException);
+                Console.ResetColor();
+                message.Message = "ERROR";
+                string json = JsonSerializer.Serialize(message);
+                await sw.WriteLineAsync(json);
+                await sw.FlushAsync();
+            }
+        }
+
+        private async void SendAgain2FAPassword(ServerMessage message, StreamWriter sw)
+        {
+            try
+            {
+                message.Code2FA = new Random().Next(100000, 999999);
+                var waiting_user = Waiting2FA.FirstOrDefault(w => w.Account.Id == message.Account.Id);
+                if (waiting_user != null)
+                {
+                    Waiting2FA.Remove(waiting_user);
+                    Waiting2FA.Add(message);
+                    Send2FAMessage(message);
+                    message.Message = "OK";
+                    string json = JsonSerializer.Serialize(message);
+                    await sw.WriteLineAsync(json);
+                    await sw.FlushAsync();
+                }
+                else
+                {
+                    message.Message = "ERROR";
+                    string json = JsonSerializer.Serialize(message);
+                    await sw.WriteLineAsync(json);
+                    await sw.FlushAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error: " + ex.Message + "\nInner: " + ex.InnerException);
+                Console.ResetColor();
+                message.Message = "ERROR";
+                string json = JsonSerializer.Serialize(message);
+                await sw.WriteLineAsync(json);
+                await sw.FlushAsync();
+            }
+            
+        }
+
+        private async void Check2FAPassword(ServerMessage message, StreamWriter sw)
+        {
+            try
+            {
+                var waiting_user = Waiting2FA.FirstOrDefault(w => w.Account.Id == message.Account.Id);
+                if (waiting_user != null)
+                {
+                    if (waiting_user.Code2FA == message.Code2FA)
+                    {
+                        Waiting2FA.Remove(waiting_user);
+                        message.Message = "OK";
+                        var accountDb = db.Accounts.FirstOrDefault(a => a.Id == message.Account.Id);
+                        if (accountDb != null)
+                        {
+                            message.Account = accountDb;
+                            message.Autorization_Data = db.Autorization_Data.Where(a => a.AccountId == accountDb.Id).ToList();
+                            string json = JsonSerializer.Serialize(message);
+                            await sw.WriteLineAsync(json);
+                            await sw.FlushAsync();
+                        }
+                    }
+                    else
+                    {
+                        message.Message = "ERROR";
+                        string json = JsonSerializer.Serialize(message);
+                        await sw.WriteLineAsync(json);
+                        await sw.FlushAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error: " + ex.Message + "\nInner: " + ex.InnerException);
+                Console.ResetColor();
+                message.Message = "ERROR";
+                string json = JsonSerializer.Serialize(message);
+                sw.WriteLine(json);
+                sw.Flush();
+            }
+        }
+
+        private async void UpdateProfile(ServerMessage message, StreamWriter sw)
+        {
+            try
+            {
+                var accountDb = db.Accounts.FirstOrDefault(a => a.Id == message.Account.Id);
+                if (accountDb != null)
+                {
+                    accountDb.Is2FAEnabled = message.Account.Is2FAEnabled;
+                    db.SaveChanges();
+                    message.Message = "OK";
+                    message.Account = accountDb;
+                    string json = JsonSerializer.Serialize(message);
+                    await sw.WriteLineAsync(json);
+                    await sw.FlushAsync();
+                }
+                else
+                {
+                    message.Message = "ERROR";
+                    string json = JsonSerializer.Serialize(message);
+                    await sw.WriteLineAsync(json);
+                    await sw.FlushAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error: " + ex.Message + "\nInner: " + ex.InnerException);
+                Console.ResetColor();
+                message.Message = "ERROR";
+                string json = JsonSerializer.Serialize(message);
+                await sw.WriteLineAsync(json);
+                await sw.FlushAsync();
+            }
+        }
+
         private async void ChangePassword(ServerMessage message, StreamWriter sw)
         {
             try
@@ -92,10 +250,17 @@ namespace Server
                 var accountDb = db.Accounts.FirstOrDefault(a => a.Id == message.Account.Id);
                 if (accountDb != null)
                 {
-                    accountDb.Password = message.Account.Password; // add hash
+                    accountDb.Password = message.Account.Password;
                     db.SaveChanges();
                     message.Message = "OK";
                     message.Account = accountDb;
+                    string json = JsonSerializer.Serialize(message);
+                    await sw.WriteLineAsync(json);
+                    await sw.FlushAsync();
+                }
+                else
+                {
+                    message.Message = "ERROR";
                     string json = JsonSerializer.Serialize(message);
                     await sw.WriteLineAsync(json);
                     await sw.FlushAsync();
@@ -239,8 +404,13 @@ namespace Server
                     {
                         if (res.Is2FAEnabled == true)
                         {
-                            message.Code2FA = new Random().Next(100000, 999999); // send to email, if 2FA enabled
+                            // save to waiting list(5 minutes)
                             message.Account = res;
+                            var waiting_user = message; // send to email, if 2FA enabled
+                            waiting_user.Code2FA = new Random().Next(100000, 999999);
+                            Waiting2FA.Add(waiting_user);
+                            Task.Run(() => Send2FAMessage(waiting_user));
+                            //
                             message.Message = "2FA";
                             string json = JsonSerializer.Serialize(message);
                             sw.WriteLine(json);
@@ -271,8 +441,11 @@ namespace Server
                     {
                         if (res.Is2FAEnabled == true)
                         {
-                            message.Code2FA = new Random().Next(100000, 999999);
-                            message.Account = res;
+                            message.Account = res; // add email into account from db
+                            var waiting_user = message;
+                            waiting_user.Code2FA = new Random().Next(100000, 999999);
+                            Waiting2FA.Add(waiting_user);
+                            Task.Run(() => Send2FAMessage(waiting_user));
                             message.Message = "2FA";
                             string json = JsonSerializer.Serialize(message);
                             sw.WriteLine(json);
@@ -310,5 +483,20 @@ namespace Server
             
         }
 
+        private void Send2FAMessage(ServerMessage waiting_user)
+        {
+            SmtpClient smtpClient = new SmtpClient("smtp.mailgun.org", 587);
+            string[] lines = File.ReadAllLines("../../../email.txt");
+            string login = lines[0];
+            string password = lines[1];
+            smtpClient.Credentials = new NetworkCredential(login, password);
+            smtpClient.EnableSsl = true;
+            MailMessage mailMessage = new MailMessage();
+            mailMessage.From = new MailAddress(login);
+            mailMessage.To.Add(waiting_user.Account.Email);
+            mailMessage.Subject = "2FA code";
+            mailMessage.Body = $"Your 2FA code is: {waiting_user.Code2FA}";
+            smtpClient.Send(mailMessage);
+        }
     }
 }
