@@ -1,6 +1,7 @@
 ﻿using Client.Security;
 using PasswordManager.Database;
 using System.IO;
+using Microsoft.Win32;
 using System.Net;
 using System.Net.Sockets;
 using System.Text.Json;
@@ -10,6 +11,8 @@ using System.Timers;
 using System.Windows.Media;
 using Client.UI;
 using MaterialDesignColors;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace Client
 {
@@ -281,6 +284,33 @@ namespace Client
             {
                 MessageBox.Show("Image not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
+            }
+        }
+
+        // click avatar func on left button
+        private void AvatarBorder_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Image files (*.png;*.jpeg;*.jpg)|*.png;*.jpeg;*.jpg|All files (*.*)|*.*";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string imagePath = openFileDialog.FileName;
+
+                if (Message?.Account == null)
+                {
+                    MessageBox.Show("Could not to find account details.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                try
+                {
+                    AddImage(imagePath, Message);
+                    AvatarImageBrush.ImageSource = new BitmapImage(new Uri(imagePath)); // main pos
+                    HeaderAvatarBrush.ImageSource = new BitmapImage(new Uri(imagePath)); // left panel pos
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Could not to upload a image" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
