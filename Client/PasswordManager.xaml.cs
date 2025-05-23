@@ -142,7 +142,7 @@ namespace Client
             {
                 UsernameData.Text = Username.Text = account.Username;
             }
-            if (Message.Image.Length > 0)
+            if (Message.Image != null)
             {
                 File.WriteAllBytes("../../../"+Message.FileNameImage, Message.Image);
                 if (File.Exists("../../../"+Message.FileNameImage))
