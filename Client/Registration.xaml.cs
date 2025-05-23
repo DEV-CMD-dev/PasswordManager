@@ -17,6 +17,7 @@ using PasswordManager.Database;
 using System.IO;
 using System.Text.Json;
 using System.Management;
+using Client.Security;
 
 namespace Client
 {
@@ -71,7 +72,7 @@ namespace Client
                 Account account = new Account();
 
                 account.Username = tbUsername.Text;
-                account.Password = tbPassword.Password;
+                account.Password = PasswordHasher.HashPassword(tbPassword.Password);
                 account.Email = tbEmail.Text;
 
                 client = new TcpClient();

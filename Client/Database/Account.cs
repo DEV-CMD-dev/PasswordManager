@@ -13,7 +13,6 @@ namespace PasswordManager.Database
         public int Id { get; set; }
         [MaxLength(40)]
         public string Username { get; set; }
-        [MaxLength(40)]
         public string Password { get; set; }
         [MaxLength(40)]
         public string Email { get; set; }
