@@ -1,6 +1,7 @@
 ﻿using Client.Security;
 using PasswordManager.Database;
 using System.IO;
+using Microsoft.Win32;
 using System.Net;
 using System.Net.Sockets;
 using System.Text.Json;
@@ -10,6 +11,10 @@ using System.Timers;
 using System.Windows.Media;
 using Client.UI;
 using MaterialDesignColors;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
+using System.Windows.Documents;
+
 
 namespace Client
 {
@@ -38,7 +43,7 @@ namespace Client
             var passwords = GetPasswords(); // for test
             UpdateProfile();
             //AddImage("../../../account(1).png", message); // test
-            ChangePassword(message, "test"); // test
+            // ChangePassword(message, "test"); // test
 
             InitializeInactivityTimer();
             HookUserActivity();
@@ -138,6 +143,15 @@ namespace Client
             if (!string.IsNullOrWhiteSpace(account.Username))
             {
                 UsernameData.Text = Username.Text = account.Username;
+            }
+            if (Message.Image != null)
+            {
+                File.WriteAllBytes("../../../"+Message.FileNameImage, Message.Image);
+                if (File.Exists("../../../"+Message.FileNameImage))
+                {
+                    AvatarImageBrush.ImageSource = new BitmapImage(new Uri(Path.GetFullPath("../../../"+Message.FileNameImage))); // main pos
+                    HeaderAvatarBrush.ImageSource = new BitmapImage(new Uri(Path.GetFullPath("../../../" + Message.FileNameImage))); // left panel pos
+                }
             }
         }
 
@@ -281,6 +295,124 @@ namespace Client
             {
                 MessageBox.Show("Image not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
+            }
+        }
+
+        // click avatar func on left button
+        private void AvatarBorder_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Image files (*.png;*.jpeg;*.jpg)|*.png;*.jpeg;*.jpg|All files (*.*)|*.*";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string imagePath = openFileDialog.FileName;
+
+                if (Message?.Account == null)
+                {
+                    MessageBox.Show("Could not to find account details.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                try
+                {
+                    AddImage(imagePath, Message);
+                    AvatarImageBrush.ImageSource = new BitmapImage(new Uri(imagePath)); // main pos
+                    HeaderAvatarBrush.ImageSource = new BitmapImage(new Uri(imagePath)); // left panel pos
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Could not to upload a image" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+        // generating password
+        private async void PasswordLengthSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            int length = (int)e.NewValue;
+            try
+            {
+                string password = await Task.Run(() => PasswordGenerator.Generate(length));
+                GeneratedPasswordTextBox.Text = password;
+
+                var strength = await Task.Run(() => PasswordStrengthEvaluator.Evaluate(password));
+                PasswordStrengthTextBlock.Text = PasswordStrengthEvaluator.GetStrengthText(strength);
+
+                PasswordStrengthStarsTextBlock.Inlines.Clear();
+
+                int stars = (int)strength;
+                int maxStars = 5;
+
+                for (int i = 0; i < stars; i++)
+                {
+                    var star = new Run("★")
+                    {
+                        Foreground = new SolidColorBrush(Colors.Green)
+                    };
+                    PasswordStrengthStarsTextBlock.Inlines.Add(star);
+                }
+                for (int i = stars; i < maxStars; i++)
+                {
+                    var star = new Run("★")
+                    {
+                        Foreground = new SolidColorBrush(Colors.LightGray)
+                    };
+                    PasswordStrengthStarsTextBlock.Inlines.Add(star);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error generating password: {ex.Message}");
+            }
+        }
+
+        //public async void GeneratePasswordButtonClick(object sender, RoutedEventArgs e)
+        //{
+        //    int length = (int)PasswordLengthSlider.Value;
+        //    try
+        //    {
+        //        string password = await Task.Run(() => PasswordGenerator.Generate(length));
+        //        GeneratedPasswordTextBox.Text = password;
+
+        //        var strength = await Task.Run(() => PasswordStrengthEvaluator.Evaluate(password));
+        //        PasswordStrengthTextBlock.Text = PasswordStrengthEvaluator.GetStrengthText(strength);
+
+        //        PasswordStrengthStarsTextBlock.Inlines.Clear();
+
+        //        int stars = (int)strength;
+        //        int maxStars = 5;
+
+        //        for (int i = 0; i < stars; i++)
+        //        {
+        //            var star = new Run("★")
+        //            {
+        //                Foreground = new SolidColorBrush(Colors.Green)
+        //            };
+        //            PasswordStrengthStarsTextBlock.Inlines.Add(star);
+        //        }
+        //        for (int i = stars; i < maxStars; i++)
+        //        {
+        //            var star = new Run("★")
+        //            {
+        //                Foreground = new SolidColorBrush(Colors.LightGray)
+        //            };
+        //            PasswordStrengthStarsTextBlock.Inlines.Add(star);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"Error generating password: {ex.Message}");
+        //    }
+        //}
+        // copy pass
+        private void CopyPasswordButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(GeneratedPasswordTextBox.Text))
+            {
+                Clipboard.SetText(GeneratedPasswordTextBox.Text);
+                MessageBox.Show("Password copied to clipboard!", "Copied", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageBox.Show("No password to copy.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
