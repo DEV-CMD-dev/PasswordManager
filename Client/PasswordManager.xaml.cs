@@ -41,7 +41,7 @@ namespace Client
             var passwords = GetPasswords(); // for test
             UpdateProfile();
             //AddImage("../../../account(1).png", message); // test
-            ChangePassword(message, "test"); // test
+            //ChangePassword(message, "test"); // test
 
             InitializeInactivityTimer();
             HookUserActivity();
@@ -141,6 +141,15 @@ namespace Client
             if (!string.IsNullOrWhiteSpace(account.Username))
             {
                 UsernameData.Text = Username.Text = account.Username;
+            }
+            if (Message.Image.Length > 0)
+            {
+                File.WriteAllBytes("../../../"+Message.FileNameImage, Message.Image);
+                if (File.Exists("../../../"+Message.FileNameImage))
+                {
+                    AvatarImageBrush.ImageSource = new BitmapImage(new Uri(Path.GetFullPath("../../../"+Message.FileNameImage))); // main pos
+                    HeaderAvatarBrush.ImageSource = new BitmapImage(new Uri(Path.GetFullPath("../../../" + Message.FileNameImage))); // left panel pos
+                }
             }
         }
 
