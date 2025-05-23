@@ -54,7 +54,8 @@
 
         </DockPanel>
 
-        <Button Click="LoginClick"
+        <Button x:Name="btnLogin"
+        Click="LoginClick"
         Grid.Row="3"
         Margin="20,5"
         materialDesign:RippleAssist.Feedback="#DD000000"

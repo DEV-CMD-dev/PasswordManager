@@ -25,8 +25,19 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         server = new IPEndPoint(IPAddress.Parse(IP), PORT);
-    }
 
+        string tokenPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "token.txt");
+
+        if (!File.Exists(tokenPath))
+        {
+            MessageBox.Show("Token not found. Please register first.", "Access Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+            tbLogin.IsEnabled = false;
+            tbPassword.IsEnabled = false;
+            btnLogin.IsEnabled = false;
+        }
+
+    }
 
 
     private string GetProcessorId() // after delete
