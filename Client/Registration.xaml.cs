@@ -92,6 +92,11 @@ namespace Client
                 string response = message.Message;
                 if (response == "OK")
                 {
+                    string token = GetProcessorId();
+                    string tokenPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "token.txt");
+                    File.WriteAllText(tokenPath, token);
+
+
                     MessageBox.Show("Registration successful");
                     MainWindow mainWindow = new MainWindow();
                     mainWindow.Left = this.Left;
