@@ -182,6 +182,11 @@ namespace Server
                         {
                             message.Account = accountDb;
                             message.Autorization_Data = db.Autorization_Data.Where(a => a.AccountId == accountDb.Id).ToList();
+                            if (File.Exists("../../../Images/" + message.Account.AvatarPath))
+                            {
+                                message.Image = File.ReadAllBytes("../../../Images/" + message.Account.AvatarPath);
+                                message.FileNameImage = message.Account.AvatarPath;
+                            }
                             string json = JsonSerializer.Serialize(message);
                             await sw.WriteLineAsync(json);
                             await sw.FlushAsync();
@@ -421,6 +426,11 @@ namespace Server
                             message.Message = "OK";
                             message.Account = res;
                             message.Autorization_Data = db.Autorization_Data.Where(a => a.AccountId == res.Id).ToList();
+                            if (File.Exists("../../../Images/" + res.AvatarPath))
+                            {
+                                message.Image = File.ReadAllBytes("../../../Images/" + res.AvatarPath);
+                                message.FileNameImage = res.AvatarPath;
+                            }
                             string json = JsonSerializer.Serialize(message);
                             sw.WriteLine(json);
                             sw.Flush();
@@ -456,6 +466,11 @@ namespace Server
                             message.Message = "OK";
                             message.Account = res;
                             message.Autorization_Data = db.Autorization_Data.Where(a => a.AccountId == res.Id).ToList();
+                            if (File.Exists("../../../Images/" + res.AvatarPath))
+                            {
+                                message.Image = File.ReadAllBytes("../../../Images/" + res.AvatarPath);
+                                message.FileNameImage = res.AvatarPath;
+                            }
                             string json = JsonSerializer.Serialize(message);
                             sw.WriteLine(json);
                             sw.Flush();
