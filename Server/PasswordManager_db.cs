@@ -1,21 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Protocols;
 using PasswordManager.Database;
-using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Server
 {
     public class PasswordManager_db : DbContext
     {
         public PasswordManager_db() 
-        { 
-            //Database.EnsureCreated();
-            //Database.EnsureDeleted();
+        {
+
         }
         public DbSet<Autorization_data> Autorization_Data { get; set; }
         public DbSet<Account> Accounts { get; set; }

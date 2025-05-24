@@ -21,6 +21,7 @@ namespace Server
         IPEndPoint server;
         TcpListener listener;
         PasswordManager_db db;
+
         List<ServerMessage> Waiting2FA;
         public PasswordManagerServer()
         {
@@ -47,44 +48,40 @@ namespace Server
                     string json = sr.ReadLine();
                     ServerMessage message = JsonSerializer.Deserialize<ServerMessage>(json);
 
-                    if (message != null)
+                    if (message == null) return;
+
+                    switch (message.Action)
                     {
-                        if (message.Action == "Login") // change to switch (message.Action)
-                        {
+                        case "Login":
                             Login(message, sw);
-                        }
-                        else if (message.Action == "Register")
-                        {
+                            break;
+                        case "Register":
                             Register(message, sw);
-                        }
-                        else if (message.Action == "AddPassword")
-                        {
+                            break;
+                        case "AddPassword":
                             AddPassword(message, sw);
-                        }
-                        else if (message.Action == "UpdateProfile")
-                        {
+                            break;
+                        case "UpdateProfile":
                             UpdateProfile(message, sw);
-                        }
-                        else if (message.Action == "2FAPassword")
-                        {
+                            break;
+                        case "2FAPassword":
                             Check2FAPassword(message, sw);
-                        }
-                        else if (message.Action == "2FASendAgain")
-                        {
+                            break;
+                        case "2FASendAgain":
                             SendAgain2FAPassword(message, sw);
-                        }
-                        else if (message.Action == "GetPasswords")
-                        {
+                            break;
+                        case "GetPasswords":
                             GetPasswords(message, sw);
-                        }
-                        else if (message.Action == "ChangePassword")
-                        {
+                            break;
+                        case "ChangePassword":
                             ChangePassword(message, sw);
-                        }
-                        else if (message.Action == "AddImage")
-                        {
+                            break;
+                        case "AddImage":
                             AddImage(message, sw);
-                        }
+                            break;
+                        default:
+                            Console.WriteLine("Unknown action: " + message.Action);
+                            break;
                     }
                 }
             }
@@ -94,8 +91,9 @@ namespace Server
                 Console.WriteLine("Error: " + ex.Message);
                 Console.ResetColor();
             }
-            
+
         }
+
 
         private async void GetPasswords(ServerMessage message, StreamWriter sw)
         {
