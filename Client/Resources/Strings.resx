@@ -175,9 +175,45 @@
     <value>Settings</value>
   </data>
   <data name="TabControlPasswordGenerator" xml:space="preserve">
-    <value>PasswordGenerator</value>
+    <value>Password Generator</value>
   </data>
   <data name="SettingsSafetyTextBox" xml:space="preserve">
     <value> - Safety</value>
+  </data>
+  <data name="SettingsEnable2FACheckBox" xml:space="preserve">
+    <value>Enable 2FA</value>
+  </data>
+  <data name="SettingsAutoclearBufferCheckbox" xml:space="preserve">
+    <value>Autoclear buffer</value>
+  </data>
+  <data name="SettingsEnableAutoLockAfter" xml:space="preserve">
+    <value>Enable auto lock after</value>
+  </data>
+  <data name="SettingsAppearanceTextBlock" xml:space="preserve">
+    <value> - Appearance</value>
+  </data>
+  <data name="SettingsThemeComboBox" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="SettingsLanguageComboBox" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="GeneratePasswordTitle" xml:space="preserve">
+    <value>Password generator</value>
+  </data>
+  <data name="GeneratePasswordLength" xml:space="preserve">
+    <value>Password length</value>
+  </data>
+  <data name="GeneratePasswordIncludeUppercaseLetters" xml:space="preserve">
+    <value>Include Uppercase Letters</value>
+  </data>
+  <data name="GeneratePasswordIncludeLowercaseLetters" xml:space="preserve">
+    <value>Include Lowercase Letters</value>
+  </data>
+  <data name="GeneratePasswordIncludeNumbers" xml:space="preserve">
+    <value>Include Numbers</value>
+  </data>
+  <data name="GeneratePasswordIncludeSymbols" xml:space="preserve">
+    <value>Include Symbols</value>
   </data>
 </root>
