@@ -57,6 +57,14 @@ namespace Client.UI
         public string SettingsThemeComboBox => Resources.Strings.SettingsThemeComboBox;
         public string SettingsLanguageComboBox => Resources.Strings.SettingsLanguageComboBox;
 
+        // Password Generator
+        public string GeneratePasswordTitle => Resources.Strings.GeneratePasswordTitle;
+        public string GeneratePasswordLength => Resources.Strings.GeneratePasswordLength;
+        public string GeneratePasswordIncludeUppercaseLetters => Resources.Strings.GeneratePasswordIncludeUppercaseLetters;
+        public string GeneratePasswordIncludeLowercaseLetters => Resources.Strings.GeneratePasswordIncludeLowercaseLetters;
+        public string GeneratePasswordIncludeNumbers => Resources.Strings.GeneratePasswordIncludeNumbers;
+        public string GeneratePasswordIncludeSymbols => Resources.Strings.GeneratePasswordIncludeSymbols;
+
 
         public void ChangeLanguage(string cultureCode)
         {

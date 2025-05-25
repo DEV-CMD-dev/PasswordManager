@@ -198,4 +198,22 @@
   <data name="SettingsLanguageComboBox" xml:space="preserve">
     <value>Мова</value>
   </data>
+  <data name="GeneratePasswordTitle" xml:space="preserve">
+    <value>Генератор паролю</value>
+  </data>
+  <data name="GeneratePasswordLength" xml:space="preserve">
+    <value>Довжина паролю</value>
+  </data>
+  <data name="GeneratePasswordIncludeUppercaseLetters" xml:space="preserve">
+    <value>Включити великі літери</value>
+  </data>
+  <data name="GeneratePasswordIncludeLowercaseLetters" xml:space="preserve">
+    <value>Включити малі літери</value>
+  </data>
+  <data name="GeneratePasswordIncludeNumbers" xml:space="preserve">
+    <value>Включити цифри</value>
+  </data>
+  <data name="GeneratePasswordIncludeSymbols" xml:space="preserve">
+    <value>Включити спеціальні символи</value>
+  </data>
 </root>

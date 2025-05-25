@@ -198,4 +198,22 @@
   <data name="SettingsLanguageComboBox" xml:space="preserve">
     <value>Language</value>
   </data>
+  <data name="GeneratePasswordTitle" xml:space="preserve">
+    <value>Password generator</value>
+  </data>
+  <data name="GeneratePasswordLength" xml:space="preserve">
+    <value>Password length</value>
+  </data>
+  <data name="GeneratePasswordIncludeUppercaseLetters" xml:space="preserve">
+    <value>Include Uppercase Letters</value>
+  </data>
+  <data name="GeneratePasswordIncludeLowercaseLetters" xml:space="preserve">
+    <value>Include Lowercase Letters</value>
+  </data>
+  <data name="GeneratePasswordIncludeNumbers" xml:space="preserve">
+    <value>Include Numbers</value>
+  </data>
+  <data name="GeneratePasswordIncludeSymbols" xml:space="preserve">
+    <value>Include Symbols</value>
+  </data>
 </root>

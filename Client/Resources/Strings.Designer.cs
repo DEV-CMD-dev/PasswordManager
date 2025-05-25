@@ -61,6 +61,60 @@ namespace Client.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Include Lowercase Letters.
+        /// </summary>
+        internal static string GeneratePasswordIncludeLowercaseLetters {
+            get {
+                return ResourceManager.GetString("GeneratePasswordIncludeLowercaseLetters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Include Numbers.
+        /// </summary>
+        internal static string GeneratePasswordIncludeNumbers {
+            get {
+                return ResourceManager.GetString("GeneratePasswordIncludeNumbers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Include Symbols.
+        /// </summary>
+        internal static string GeneratePasswordIncludeSymbols {
+            get {
+                return ResourceManager.GetString("GeneratePasswordIncludeSymbols", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Include Uppercase Letters.
+        /// </summary>
+        internal static string GeneratePasswordIncludeUppercaseLetters {
+            get {
+                return ResourceManager.GetString("GeneratePasswordIncludeUppercaseLetters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password length.
+        /// </summary>
+        internal static string GeneratePasswordLength {
+            get {
+                return ResourceManager.GetString("GeneratePasswordLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password generator.
+        /// </summary>
+        internal static string GeneratePasswordTitle {
+            get {
+                return ResourceManager.GetString("GeneratePasswordTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
         internal static string PasswordsDeleteButton {
