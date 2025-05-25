@@ -369,7 +369,8 @@ namespace Client
                     PasswordList.Items.Remove(item);
                     //RemovePassword()
                     //PasswordCryptor passwordCryptor = new PasswordCryptor(DescryptionToken);
-                    //PasswordItem passwordEncrypted = new PasswordItem() {
+                    //PasswordItem passwordEncrypted = new PasswordItem()
+                    //{
                     //    Website = (((PasswordItem)item).Website),
                     //    User = passwordCryptor.EncryptPassword(((PasswordItem)item).User),
                     //    Password = passwordCryptor.EncryptPassword(((PasswordItem)item).Password)
@@ -383,7 +384,8 @@ namespace Client
                     //        RemovePassword(password);
                     //        break;
                     //    }
-                    //} not work
+                    //}
+                    //not work
                 }
                 else
                 {

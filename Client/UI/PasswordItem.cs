@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 
 public class PasswordItem : INotifyPropertyChanged
 {
+    public int Id { get; set; }
     private string _website;
     public string Website
     {

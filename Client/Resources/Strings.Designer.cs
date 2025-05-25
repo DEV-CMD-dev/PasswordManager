@@ -61,15 +61,6 @@ namespace Client.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Favorites.
-        /// </summary>
-        internal static string FavoritesTitle {
-            get {
-                return ResourceManager.GetString("FavoritesTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
         internal static string PasswordsDeleteButton {
@@ -201,6 +192,15 @@ namespace Client.Resources {
         internal static string ProfileUsernameTextBoxHint {
             get {
                 return ResourceManager.GetString("ProfileUsernameTextBoxHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  - Safety.
+        /// </summary>
+        internal static string SettingsSafetyTextBox {
+            get {
+                return ResourceManager.GetString("SettingsSafetyTextBox", resourceCulture);
             }
         }
         

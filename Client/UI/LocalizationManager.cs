@@ -48,6 +48,9 @@ namespace Client.UI
         public string PasswordsPasswordHint => Resources.Strings.PasswordsPasswordTextBoxHint;
         public string PasswordsDeleteButton => Resources.Strings.PasswordsDeleteButton;
 
+        // Settings
+        public string SettingsTitle => Resources.Strings.SettingsSafetyTextBox;
+
 
         public void ChangeLanguage(string cultureCode)
         {
