@@ -196,11 +196,65 @@ namespace Client.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to  - Appearance.
+        /// </summary>
+        internal static string SettingsAppearanceTextBlock {
+            get {
+                return ResourceManager.GetString("SettingsAppearanceTextBlock", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Autoclear buffer.
+        /// </summary>
+        internal static string SettingsAutoclearBufferCheckbox {
+            get {
+                return ResourceManager.GetString("SettingsAutoclearBufferCheckbox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable 2FA.
+        /// </summary>
+        internal static string SettingsEnable2FACheckBox {
+            get {
+                return ResourceManager.GetString("SettingsEnable2FACheckBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable auto lock after.
+        /// </summary>
+        internal static string SettingsEnableAutoLockAfter {
+            get {
+                return ResourceManager.GetString("SettingsEnableAutoLockAfter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language.
+        /// </summary>
+        internal static string SettingsLanguageComboBox {
+            get {
+                return ResourceManager.GetString("SettingsLanguageComboBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to  - Safety.
         /// </summary>
         internal static string SettingsSafetyTextBox {
             get {
                 return ResourceManager.GetString("SettingsSafetyTextBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Theme.
+        /// </summary>
+        internal static string SettingsThemeComboBox {
+            get {
+                return ResourceManager.GetString("SettingsThemeComboBox", resourceCulture);
             }
         }
         
@@ -214,7 +268,7 @@ namespace Client.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PasswordGenerator.
+        ///   Looks up a localized string similar to Password Generator.
         /// </summary>
         internal static string TabControlPasswordGenerator {
             get {

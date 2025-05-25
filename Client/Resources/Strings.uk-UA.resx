@@ -180,4 +180,22 @@
   <data name="SettingsSafetyTextBox" xml:space="preserve">
     <value> - Безпека</value>
   </data>
+  <data name="SettingsEnable2FACheckBox" xml:space="preserve">
+    <value>Увімкнути 2-факторне підтвердження</value>
+  </data>
+  <data name="SettingsAutoclearBufferCheckbox" xml:space="preserve">
+    <value>Автоматичне очищення буферу</value>
+  </data>
+  <data name="SettingsEnableAutoLockAfter" xml:space="preserve">
+    <value>Увімкнути авто блокування після</value>
+  </data>
+  <data name="SettingsAppearanceTextBlock" xml:space="preserve">
+    <value> - Вигляд</value>
+  </data>
+  <data name="SettingsThemeComboBox" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="SettingsLanguageComboBox" xml:space="preserve">
+    <value>Мова</value>
+  </data>
 </root>

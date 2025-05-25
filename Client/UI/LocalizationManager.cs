@@ -50,6 +50,12 @@ namespace Client.UI
 
         // Settings
         public string SettingsTitle => Resources.Strings.SettingsSafetyTextBox;
+        public string Settings2FACheckbox => Resources.Strings.SettingsEnable2FACheckBox;
+        public string SettingsAutoclearBufferCheckbox => Resources.Strings.SettingsAutoclearBufferCheckbox;
+        public string SettingsEnableAutoLockAfter => Resources.Strings.SettingsEnableAutoLockAfter;
+        public string SettingsAppearanceTextBlock => Resources.Strings.SettingsAppearanceTextBlock;
+        public string SettingsThemeComboBox => Resources.Strings.SettingsThemeComboBox;
+        public string SettingsLanguageComboBox => Resources.Strings.SettingsLanguageComboBox;
 
 
         public void ChangeLanguage(string cultureCode)
