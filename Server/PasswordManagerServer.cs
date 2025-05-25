@@ -76,6 +76,9 @@ namespace Server
                         case "ChangePassword":
                             ChangePassword(message, sw);
                             break;
+                        case "RemovePassword":
+                            RemovePassword(message, sw);
+                            break;
                         case "AddImage":
                             AddImage(message, sw);
                             break;
@@ -94,6 +97,54 @@ namespace Server
 
         }
 
+        private async void RemovePassword(ServerMessage message, StreamWriter sw)
+        {
+            try
+            {
+                var password = message.Autorization_Data.FirstOrDefault();
+                if (password != null)
+                {
+                    //db.Autorization_Data.Remove(password);
+                    var passwordfromDb = db.Autorization_Data.FirstOrDefault(p => p.Id == password.Id && p.AccountId == message.Account.Id);
+                    if (passwordfromDb == null)
+                    {
+                        message.Message = "ERROR";
+                        string json = JsonSerializer.Serialize(message);
+                        await sw.WriteLineAsync(json);
+                        await sw.FlushAsync();
+                        return;
+                    }
+
+                    db.Autorization_Data.Remove(passwordfromDb);
+                    int res = db.SaveChanges();
+                    if (res > 0)
+                    {
+                        message.Message = "OK";
+                        //message.Autorization_Data = db.Autorization_Data.Where(a => a.AccountId == message.Account.Id).ToList();
+                        string json = JsonSerializer.Serialize(message);
+                        await sw.WriteLineAsync(json);
+                        await sw.FlushAsync();
+                    }
+                    else
+                    {
+                        message.Message = "ERROR";
+                        string json = JsonSerializer.Serialize(message);
+                        await sw.WriteLineAsync(json);
+                        await sw.FlushAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error: " + ex.Message + "\nInner: " + ex.InnerException);
+                Console.ResetColor();
+                message.Message = "ERROR";
+                string json = JsonSerializer.Serialize(message);
+                await sw.WriteLineAsync(json);
+                await sw.FlushAsync();
+            }
+        }
 
         private async void GetPasswords(ServerMessage message, StreamWriter sw)
         {

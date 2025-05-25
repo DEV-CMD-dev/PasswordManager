@@ -48,14 +48,42 @@ namespace Client
             UpdateProfile();
             //AddImage("../../../account(1).png", message); // test
             // ChangePassword(message, "test"); // test
-
+            //RemovePassword(Message.Autorization_Data[0]); // works, test
             InitializeInactivityTimer();
             HookUserActivity();
             
             
             DataContext = this;
         }
-
+        private void RemovePassword(Autorization_data password)
+        {
+            if (password is null)
+            {
+                return;
+            }
+            Message.Action = "RemovePassword";
+            TcpClient client = new TcpClient();
+            client.Connect(Server);
+            var ns = client.GetStream();
+            StreamWriter sw = new StreamWriter(ns);
+            StreamReader sr = new StreamReader(ns);
+            Message.Autorization_Data = new List<Autorization_data> { password };
+            var json = JsonSerializer.Serialize(Message);
+            sw.WriteLine(json);
+            sw.Flush();
+            var responseJson = sr.ReadLine();
+            var responseMessage = JsonSerializer.Deserialize<ServerMessage>(responseJson);
+            if (responseMessage != null && responseMessage.Message == "OK")
+            {
+                MessageBox.Show("Password removed successfully.");
+                GetPasswords();
+            }
+            else
+            {
+                MessageBox.Show("Error removing password.");
+            }
+        }
+        
         private void ChangeLanguage(object sender, SelectionChangedEventArgs e)
         {
             var availableLanguages = Localization.GetAvailableLanguages();
@@ -77,7 +105,6 @@ namespace Client
                     Localization.ChangeLanguage("");
                     break;
             }
-
         }
 
         private void UpdatePasswords()
@@ -219,6 +246,7 @@ namespace Client
                     User = passwordHasher.DecryptPassword(password.Login),
                     Password = passwordHasher.DecryptPassword(password.Password),
                     Website = password.Site,
+                    IsFavorite = password.IsFavourite
                 };
                 passwordsDecrypted.Add(decryptedPassword);
 
@@ -339,6 +367,23 @@ namespace Client
                 else if (PasswordList.Items.Contains(item))
                 {
                     PasswordList.Items.Remove(item);
+                    //RemovePassword()
+                    //PasswordCryptor passwordCryptor = new PasswordCryptor(DescryptionToken);
+                    //PasswordItem passwordEncrypted = new PasswordItem() {
+                    //    Website = (((PasswordItem)item).Website),
+                    //    User = passwordCryptor.EncryptPassword(((PasswordItem)item).User),
+                    //    Password = passwordCryptor.EncryptPassword(((PasswordItem)item).Password)
+                    //};
+                    //foreach (var password in Message.Autorization_Data)
+                    //{
+                    //    if (password.Site == passwordEncrypted.Website &&
+                    //        password.Login == passwordEncrypted.User && // another login & password, error
+                    //        password.Password == passwordEncrypted.Password)
+                    //    {
+                    //        RemovePassword(password);
+                    //        break;
+                    //    }
+                    //} not work
                 }
                 else
                 {

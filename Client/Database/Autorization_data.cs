@@ -17,6 +17,7 @@ namespace PasswordManager.Database
         [MaxLength(40)]
         public string Password { get; set; }
         public int AccountId { get; set; }
+        public bool IsFavourite { get; set; } = false;
         [JsonIgnore]
         public Account Account { get; set; }
     }
