@@ -177,4 +177,7 @@
   <data name="TabControlPasswordGenerator" xml:space="preserve">
     <value>Генератор паролів</value>
   </data>
+  <data name="SettingsSafetyTextBox" xml:space="preserve">
+    <value> - Безпека</value>
+  </data>
 </root>

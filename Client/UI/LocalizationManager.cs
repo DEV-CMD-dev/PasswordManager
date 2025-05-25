@@ -7,13 +7,13 @@ namespace Client.UI
 
     public class LocalizationManager : INotifyPropertyChanged
     {
-        private IEnumerable<string> AvailableLanguages { get; } = new List<string>
+        private List<string> AvailableLanguages { get; } = new List<string>
         {
             "English",
             "Українська"
         };
 
-        public IEnumerable<string> GetAvailableLanguages()
+        public List<string> GetAvailableLanguages()
         {
             return AvailableLanguages;
         }
@@ -47,6 +47,9 @@ namespace Client.UI
         public string PasswordsUserHint => Resources.Strings.PasswordsUserTextBoxHint;
         public string PasswordsPasswordHint => Resources.Strings.PasswordsPasswordTextBoxHint;
         public string PasswordsDeleteButton => Resources.Strings.PasswordsDeleteButton;
+
+        // Settings
+        public string SettingsTitle => Resources.Strings.SettingsSafetyTextBox;
 
 
         public void ChangeLanguage(string cultureCode)

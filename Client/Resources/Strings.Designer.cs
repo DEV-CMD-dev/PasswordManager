@@ -22,21 +22,21 @@ namespace Client.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Strings {
+    internal class Strings {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public Strings() {
+        internal Strings() {
         }
         
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Client.Resources.Strings", typeof(Strings).Assembly);
@@ -51,7 +51,7 @@ namespace Client.Resources {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace Client.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
-        public static string PasswordsDeleteButton {
+        internal static string PasswordsDeleteButton {
             get {
                 return ResourceManager.GetString("PasswordsDeleteButton", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace Client.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Password.
         /// </summary>
-        public static string PasswordsPasswordTextBoxHint {
+        internal static string PasswordsPasswordTextBoxHint {
             get {
                 return ResourceManager.GetString("PasswordsPasswordTextBoxHint", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace Client.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Passwords.
         /// </summary>
-        public static string PasswordsTitle {
+        internal static string PasswordsTitle {
             get {
                 return ResourceManager.GetString("PasswordsTitle", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace Client.Resources {
         /// <summary>
         ///   Looks up a localized string similar to User.
         /// </summary>
-        public static string PasswordsUserTextBoxHint {
+        internal static string PasswordsUserTextBoxHint {
             get {
                 return ResourceManager.GetString("PasswordsUserTextBoxHint", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace Client.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Website.
         /// </summary>
-        public static string PasswordsWebsiteTextBoxHint {
+        internal static string PasswordsWebsiteTextBoxHint {
             get {
                 return ResourceManager.GetString("PasswordsWebsiteTextBoxHint", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace Client.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Apply cahnges.
         /// </summary>
-        public static string ProfileApplyChangesButton {
+        internal static string ProfileApplyChangesButton {
             get {
                 return ResourceManager.GetString("ProfileApplyChangesButton", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace Client.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Change password.
         /// </summary>
-        public static string ProfileChangePasswordTextBox {
+        internal static string ProfileChangePasswordTextBox {
             get {
                 return ResourceManager.GetString("ProfileChangePasswordTextBox", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace Client.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Confirm password.
         /// </summary>
-        public static string ProfileConfirmPasswordTextBoxHint {
+        internal static string ProfileConfirmPasswordTextBoxHint {
             get {
                 return ResourceManager.GetString("ProfileConfirmPasswordTextBoxHint", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace Client.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Current password.
         /// </summary>
-        public static string ProfileCurrentPasswordTextBoxHint {
+        internal static string ProfileCurrentPasswordTextBoxHint {
             get {
                 return ResourceManager.GetString("ProfileCurrentPasswordTextBoxHint", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace Client.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Name.
         /// </summary>
-        public static string ProfileNameTextBoxHint {
+        internal static string ProfileNameTextBoxHint {
             get {
                 return ResourceManager.GetString("ProfileNameTextBoxHint", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace Client.Resources {
         /// <summary>
         ///   Looks up a localized string similar to New password.
         /// </summary>
-        public static string ProfileNewPasswordTextBoxHint {
+        internal static string ProfileNewPasswordTextBoxHint {
             get {
                 return ResourceManager.GetString("ProfileNewPasswordTextBoxHint", resourceCulture);
             }
@@ -162,7 +162,7 @@ namespace Client.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Personal infromation.
         /// </summary>
-        public static string ProfilePersonalInformationTextBox {
+        internal static string ProfilePersonalInformationTextBox {
             get {
                 return ResourceManager.GetString("ProfilePersonalInformationTextBox", resourceCulture);
             }
@@ -171,7 +171,7 @@ namespace Client.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Surname.
         /// </summary>
-        public static string ProfileSurnameTextBoxHint {
+        internal static string ProfileSurnameTextBoxHint {
             get {
                 return ResourceManager.GetString("ProfileSurnameTextBoxHint", resourceCulture);
             }
@@ -180,7 +180,7 @@ namespace Client.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Personal data.
         /// </summary>
-        public static string ProfileTitle {
+        internal static string ProfileTitle {
             get {
                 return ResourceManager.GetString("ProfileTitle", resourceCulture);
             }
@@ -189,16 +189,25 @@ namespace Client.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Username.
         /// </summary>
-        public static string ProfileUsernameTextBoxHint {
+        internal static string ProfileUsernameTextBoxHint {
             get {
                 return ResourceManager.GetString("ProfileUsernameTextBoxHint", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to  - Safety.
+        /// </summary>
+        internal static string SettingsSafetyTextBox {
+            get {
+                return ResourceManager.GetString("SettingsSafetyTextBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Favorites.
         /// </summary>
-        public static string TabControlFavorites {
+        internal static string TabControlFavorites {
             get {
                 return ResourceManager.GetString("TabControlFavorites", resourceCulture);
             }
@@ -207,7 +216,7 @@ namespace Client.Resources {
         /// <summary>
         ///   Looks up a localized string similar to PasswordGenerator.
         /// </summary>
-        public static string TabControlPasswordGenerator {
+        internal static string TabControlPasswordGenerator {
             get {
                 return ResourceManager.GetString("TabControlPasswordGenerator", resourceCulture);
             }
@@ -216,7 +225,7 @@ namespace Client.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Passwords.
         /// </summary>
-        public static string TabControlPasswords {
+        internal static string TabControlPasswords {
             get {
                 return ResourceManager.GetString("TabControlPasswords", resourceCulture);
             }
@@ -225,7 +234,7 @@ namespace Client.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Profile.
         /// </summary>
-        public static string TabControlProfile {
+        internal static string TabControlProfile {
             get {
                 return ResourceManager.GetString("TabControlProfile", resourceCulture);
             }
@@ -234,7 +243,7 @@ namespace Client.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Settings.
         /// </summary>
-        public static string TabControlSettings {
+        internal static string TabControlSettings {
             get {
                 return ResourceManager.GetString("TabControlSettings", resourceCulture);
             }
