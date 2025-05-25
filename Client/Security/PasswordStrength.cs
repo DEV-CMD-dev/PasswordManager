@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 
 namespace Client.Security
 {
@@ -64,7 +59,7 @@ namespace Client.Security
                 case PasswordStrength.Strong:
                     return "Strong";
                 case PasswordStrength.VeryStrong:
-                    return "Very Strong";
+                    return "Pentagon strength";
                 default:
                     return "Unknown";
             }

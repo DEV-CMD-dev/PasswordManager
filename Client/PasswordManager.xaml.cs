@@ -416,12 +416,21 @@ namespace Client
             }
         }
         // generating password
-        private async void PasswordLengthSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        public async void GeneratePassword(object sender, RoutedEventArgs e)
         {
-            int length = (int)e.NewValue;
             try
             {
-                string password = await Task.Run(() => PasswordGenerator.Generate(length));
+                bool isLowercase = IncludeLowercaseLetters.IsChecked ?? false;
+                bool isUppercase = IncludeUppercaseLetters.IsChecked ?? false;
+                bool isNumbers = IncludeNumbers.IsChecked ?? false;
+                bool isSymbols = IncludeSymbols.IsChecked ?? false;
+
+                if(int.TryParse(GeneratePasswordLength.Text.ToString(), out int length) == false || length < 8 || length > 100)
+                {
+                    return;
+                }
+
+                string password = await Task.Run(() => PasswordGenerator.Generate(length, isLowercase,isUppercase,isNumbers,isSymbols));
                 GeneratedPasswordTextBox.Text = password;
 
                 var strength = await Task.Run(() => PasswordStrengthEvaluator.Evaluate(password));
@@ -456,16 +465,11 @@ namespace Client
         }
 
         // copy pass
-        private void CopyPasswordButtonClick(object sender, RoutedEventArgs e)
+        private void CopyGeneratedPasswordButtonClick(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrEmpty(GeneratedPasswordTextBox.Text))
             {
                 Clipboard.SetText(GeneratedPasswordTextBox.Text);
-                MessageBox.Show("Password copied to clipboard!", "Copied", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else
-            {
-                MessageBox.Show("No password to copy.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -516,38 +520,48 @@ namespace Client
         void ChangePasswordBtn(object sender, RoutedEventArgs e)
         {
             // add checking strength password
-            if (string.IsNullOrWhiteSpace(tbCurrentPassword.Text) || string.IsNullOrWhiteSpace(tbNewPassword.Text) || string.IsNullOrEmpty(tbConfirmPassword.Text))
+            string current = tbCurrentPassword.Text;
+            string newPass = tbNewPassword.Text;
+            string confirm = tbConfirmPassword.Text;
+
+            if (string.IsNullOrWhiteSpace(current) || string.IsNullOrWhiteSpace(newPass) || string.IsNullOrWhiteSpace(confirm))
             {
-                MessageBox.Show("Please fill in all fields.");
+                ShowError("Please fill in all fields.");
                 return;
             }
-            if (tbCurrentPassword.Text == tbNewPassword.Text)
+
+            if (current == newPass)
             {
-                MessageBox.Show("Password must be another", "Error", MessageBoxButton.OK, MessageBoxImage.Error); // change to another
+                ShowError("New password must be different from current.");
                 return;
             }
-            if (PasswordHasher.HashPassword(tbCurrentPassword.Text) != Message.Account.Password)
+
+            if (PasswordHasher.HashPassword(current) != Message.Account.Password)
             {
-                MessageBox.Show("Current password is incorrect", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ShowError("Current password is incorrect.");
                 return;
             }
-            if (tbNewPassword.Text != tbConfirmPassword.Text)
+
+            if (newPass != confirm)
             {
-                MessageBox.Show("Passwords do not match", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ShowError("Passwords do not match.");
                 return;
             }
-            if (tbNewPassword.Text.Length < 8)
+
+            if (newPass.Length < 8 || newPass.Length > 40)
             {
-                MessageBox.Show("Password must be at least 8 characters long", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ShowError("Password must be between 8 and 40 characters long.");
                 return;
             }
-            if (tbNewPassword.Text.Length > 40)
-            {
-                MessageBox.Show("Password must be no more than 40 characters long", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+
             ChangePassword(Message, tbNewPassword.Text);
         }
+
+        private void ShowError(string message)
+        {
+            MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
 
 
         private async void Update2FAStatus(object sender, RoutedEventArgs e)

@@ -7,13 +7,13 @@ namespace Client.UI
 
     public class LocalizationManager : INotifyPropertyChanged
     {
-        private IEnumerable<string> AvailableLanguages { get; } = new List<string>
+        private List<string> AvailableLanguages { get; } = new List<string>
         {
             "English",
             "Українська"
         };
 
-        public IEnumerable<string> GetAvailableLanguages()
+        public List<string> GetAvailableLanguages()
         {
             return AvailableLanguages;
         }
