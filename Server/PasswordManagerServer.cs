@@ -82,6 +82,9 @@ namespace Server
                         case "AddImage":
                             AddImage(message, sw);
                             break;
+                        case "RecoverPassword":
+                            RecoverPassword(message, sw);
+                            break;
                         default:
                             Console.WriteLine("Unknown action: " + message.Action);
                             break;
@@ -95,6 +98,40 @@ namespace Server
                 Console.ResetColor();
             }
 
+        }
+
+        private async void RecoverPassword(ServerMessage message, StreamWriter sw)
+        {
+            Account res = null;
+            if (message.Account.Email != null)
+            {
+                res = db.Accounts.FirstOrDefault(a => a.Email == message.Account.Email);
+                
+            }
+            else // username
+            {
+                res = db.Accounts.FirstOrDefault(a => a.Username == message.Account.Username);
+            }
+            if (res != null)
+            {
+                message.Message = "OK";
+                message.Account.Id = res.Id; // fix bug with 2fa
+                string json = JsonSerializer.Serialize(message);
+                await sw.WriteLineAsync(json);
+                await sw.FlushAsync();
+                // after sending message to client, add to waiting list
+                message.Account = res;
+                message.Code2FA = new Random().Next(100000, 999999);
+                Waiting2FA.Add(message);
+                Send2FAMessage(message);
+            }
+            else
+            {
+                message.Message = "ERROR";
+                string json = JsonSerializer.Serialize(message);
+                await sw.WriteLineAsync(json);
+                await sw.FlushAsync();
+            }
         }
 
         private async void RemovePassword(ServerMessage message, StreamWriter sw)
