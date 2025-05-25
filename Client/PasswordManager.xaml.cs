@@ -14,6 +14,8 @@ using MaterialDesignColors;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Documents;
+using System.Collections.ObjectModel;
+using System.Windows.Controls.Primitives;
 
 
 namespace Client
@@ -24,6 +26,7 @@ namespace Client
     public partial class PasswordManagerWindow : Window
     {
         public IEnumerable<Swatch> ColorList { get; set; } = ThemeHelper.GetAvaliableColors();
+        public ObservableCollection<PasswordItem> Passwords { get; set; }
 
         public ServerMessage Message { get; set; }
         public string DescryptionToken { get; set; }
@@ -33,23 +36,81 @@ namespace Client
             InitializeComponent();
             DataContext = new MainViewModel();
             Message = message;
+            PasswordList.ItemsSource = Passwords;
             DescryptionToken = descryptionToken;
             Server = server;
             if (message.Account.Is2FAEnabled)
             {
                 cb2FA.IsChecked = true;
             }
-            //AddPassword("test", "test", "https://google.com"); // for test
-            var passwords = GetPasswords(); // for test
+            Passwords = GetPasswords();
             UpdateProfile();
             //AddImage("../../../account(1).png", message); // test
             // ChangePassword(message, "test"); // test
 
             InitializeInactivityTimer();
             HookUserActivity();
-
             DataContext = this;
         }
+
+        private void UpdatePasswords()
+        {
+            foreach (var password in Passwords)
+            {
+                PasswordList.Items.Add(password);
+            }
+            UpdatePasswordBoxes();
+        }
+
+        private async void UpdatePasswordBoxes()
+        {
+            await Task.Delay(2000);
+
+            for (int i = 0; i < PasswordList.Items.Count; i++)
+            {
+                var container = (ContentPresenter)PasswordList.ItemContainerGenerator.ContainerFromIndex(i);
+                if (container == null)
+                {
+                    if (PasswordList.ItemContainerGenerator.Status != GeneratorStatus.ContainersGenerated)
+                    {
+                        await Task.Delay(50);
+                        container = (ContentPresenter)PasswordList.ItemContainerGenerator.ContainerFromIndex(i);
+                    }
+                    if (container == null)
+                        continue;
+                }
+
+                var passwordBox = FindVisualChild<PasswordBox>(container);
+                if (passwordBox != null)
+                {
+                    var item = PasswordList.Items[i] as PasswordItem;
+                    if (item != null)
+                        passwordBox.Password = item.Password;
+                }
+            }
+        }
+
+
+        private static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            if (parent == null) return null;
+
+            int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < childrenCount; i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+
+                if (child is T typedChild)
+                    return typedChild;
+
+                var childOfChild = FindVisualChild<T>(child);
+                if (childOfChild != null)
+                    return childOfChild;
+            }
+            return null;
+        }
+
+
 
         // timer
         private System.Timers.Timer inactivityTimer;
@@ -91,12 +152,12 @@ namespace Client
             });
         }
 
-        public async Task<List<Autorization_data>> GetPasswordsAsync()
+        public async Task<ObservableCollection<PasswordItem>> GetPasswordsAsync()
         {
             return Task.Run(() => GetPasswords()).Result;
         }
 
-        public List<Autorization_data> GetPasswords()
+        public ObservableCollection<PasswordItem> GetPasswords()
         {
             // get passwords from db
             Message.Action = "GetPasswords";
@@ -113,7 +174,7 @@ namespace Client
             if (responseMessage == null || responseMessage.Message != "OK")
             {
                 MessageBox.Show("Error getting passwords.");
-                return new List<Autorization_data>();
+                return new ObservableCollection<PasswordItem>();
             }
             Message = responseMessage;
             // decrypt passwords
@@ -121,18 +182,19 @@ namespace Client
             var passwordsEncrypted = Message.Autorization_Data;
             if (passwordsEncrypted is null) // not have a passwords
             {
-                return new List<Autorization_data>();
+                return new ObservableCollection<PasswordItem>();
             }
-            var passwordsDecrypted = new List<Autorization_data>();
+            var passwordsDecrypted = new ObservableCollection<PasswordItem>();
             foreach (var password in passwordsEncrypted)
             {
-                var decryptedPassword = new Autorization_data
+                var decryptedPassword = new PasswordItem
                 {
-                    Login = passwordHasher.DecryptPassword(password.Login),
+                    User = passwordHasher.DecryptPassword(password.Login),
                     Password = passwordHasher.DecryptPassword(password.Password),
-                    Site = password.Site,
+                    Website = password.Site,
                 };
                 passwordsDecrypted.Add(decryptedPassword);
+
             }
             return passwordsDecrypted;
         }
@@ -153,7 +215,10 @@ namespace Client
                     HeaderAvatarBrush.ImageSource = new BitmapImage(new Uri(Path.GetFullPath("../../../" + Message.FileNameImage))); // left panel pos
                 }
             }
+            UpdatePasswords();
         }
+
+        
 
         public async void AddPassword(string login, string password, string site = "")
         {
@@ -236,20 +301,13 @@ namespace Client
             }
         }
 
-        //need to fix
         private void DeletePassword(object sender, RoutedEventArgs e)
         {
-            if (sender is Button button && button.DataContext != null)
+            if (sender is Button button && button.DataContext is object item)
             {
-                var item = button.DataContext;
-
-                if (PasswordList.ItemsSource is IList<object> sourceList)
+                if (PasswordList.ItemsSource is System.Collections.IList list)
                 {
-                    int index = sourceList.IndexOf(item);
-                    if (index >= 0)
-                    {
-                        sourceList.RemoveAt(index);
-                    }
+                    list.Remove(item);
                 }
                 else if (PasswordList.Items.Contains(item))
                 {
@@ -262,6 +320,7 @@ namespace Client
             }
         }
 
+
         public async void AddImage(string imagepath, ServerMessage message)
         {
             if (Path.Exists(imagepath))
@@ -270,16 +329,21 @@ namespace Client
                 message.FileNameImage = message.Account.Id + Path.GetExtension(imagepath);
                 message.Action = "AddImage";
                 message.Message = "";
+
                 var json = JsonSerializer.Serialize(message);
                 TcpClient client = new TcpClient();
+
                 client.Connect(Server);
                 var ns = client.GetStream();
+
                 StreamWriter sw = new StreamWriter(ns);
                 StreamReader sr = new StreamReader(ns);
                 await sw.WriteLineAsync(json);
                 await sw.FlushAsync();
+
                 var responseJson = await sr.ReadLineAsync();
                 var responseMessage = JsonSerializer.Deserialize<ServerMessage>(responseJson);
+
                 if (responseMessage.Message == "OK")
                 {
                     MessageBox.Show("Image added successfully.");
@@ -364,44 +428,6 @@ namespace Client
             }
         }
 
-        //public async void GeneratePasswordButtonClick(object sender, RoutedEventArgs e)
-        //{
-        //    int length = (int)PasswordLengthSlider.Value;
-        //    try
-        //    {
-        //        string password = await Task.Run(() => PasswordGenerator.Generate(length));
-        //        GeneratedPasswordTextBox.Text = password;
-
-        //        var strength = await Task.Run(() => PasswordStrengthEvaluator.Evaluate(password));
-        //        PasswordStrengthTextBlock.Text = PasswordStrengthEvaluator.GetStrengthText(strength);
-
-        //        PasswordStrengthStarsTextBlock.Inlines.Clear();
-
-        //        int stars = (int)strength;
-        //        int maxStars = 5;
-
-        //        for (int i = 0; i < stars; i++)
-        //        {
-        //            var star = new Run("★")
-        //            {
-        //                Foreground = new SolidColorBrush(Colors.Green)
-        //            };
-        //            PasswordStrengthStarsTextBlock.Inlines.Add(star);
-        //        }
-        //        for (int i = stars; i < maxStars; i++)
-        //        {
-        //            var star = new Run("★")
-        //            {
-        //                Foreground = new SolidColorBrush(Colors.LightGray)
-        //            };
-        //            PasswordStrengthStarsTextBlock.Inlines.Add(star);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show($"Error generating password: {ex.Message}");
-        //    }
-        //}
         // copy pass
         private void CopyPasswordButtonClick(object sender, RoutedEventArgs e)
         {
@@ -437,6 +463,9 @@ namespace Client
                     if (responseMessage.Message == "OK")
                     {
                         MessageBox.Show("Password changed successfully.");
+                        tbCurrentPassword.Clear();
+                        tbNewPassword.Clear();
+                        tbConfirmPassword.Clear();
                         message = responseMessage;
                         message.Message = "";
                     }
@@ -457,7 +486,7 @@ namespace Client
             
         }
 
-        private void ChangePasswordBtn(object sender, RoutedEventArgs e)
+        void ChangePasswordBtn(object sender, RoutedEventArgs e)
         {
             // add checking strength password
             if (string.IsNullOrWhiteSpace(tbCurrentPassword.Text) || string.IsNullOrWhiteSpace(tbNewPassword.Text) || string.IsNullOrEmpty(tbConfirmPassword.Text))
@@ -470,7 +499,7 @@ namespace Client
                 MessageBox.Show("Password must be another", "Error", MessageBoxButton.OK, MessageBoxImage.Error); // change to another
                 return;
             }
-            if (tbCurrentPassword.Text != Message.Account.Password)
+            if (PasswordHasher.HashPassword(tbCurrentPassword.Text) != Message.Account.Password)
             {
                 MessageBox.Show("Current password is incorrect", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -492,6 +521,7 @@ namespace Client
             }
             ChangePassword(Message, tbNewPassword.Text);
         }
+
 
         private async void Update2FAStatus(object sender, RoutedEventArgs e)
         {
