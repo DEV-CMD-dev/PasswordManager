@@ -27,6 +27,8 @@ namespace Client
     {
         public IEnumerable<Swatch> ColorList { get; set; } = ThemeHelper.GetAvaliableColors();
         public ObservableCollection<PasswordItem> Passwords { get; set; }
+        public LocalizationManager Localization => LocalizationManager.Instance;
+        LocalizationManager language = new LocalizationManager();
 
         public ServerMessage Message { get; set; }
         public string DescryptionToken { get; set; }
@@ -34,7 +36,7 @@ namespace Client
         public PasswordManagerWindow(ServerMessage message, string descryptionToken, IPEndPoint server)
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
+            //DataContext = new MainViewModel();
             Message = message;
             PasswordList.ItemsSource = Passwords;
             DescryptionToken = descryptionToken;
@@ -50,7 +52,33 @@ namespace Client
 
             InitializeInactivityTimer();
             HookUserActivity();
+            
+            
             DataContext = this;
+        }
+
+        private void ChangeLanguage(object sender, SelectionChangedEventArgs e)
+        {
+            var availableLanguages = Localization.GetAvailableLanguages();
+            var item = LanguageSettingsCb.SelectedItem as ComboBoxItem;
+            var selectedLanguage = item.Content as string;
+
+            if (!availableLanguages.Contains(selectedLanguage))
+                return;
+
+            switch(selectedLanguage)
+            {
+                case "English":
+                    Localization.ChangeLanguage("");
+                    break;
+                case "Українська":
+                    Localization.ChangeLanguage("uk-UA");
+                    break;
+                default:
+                    Localization.ChangeLanguage("");
+                    break;
+            }
+
         }
 
         private void UpdatePasswords()
