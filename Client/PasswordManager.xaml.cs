@@ -28,7 +28,6 @@ namespace Client
         public IEnumerable<Swatch> ColorList { get; set; } = ThemeHelper.GetAvaliableColors();
         public ObservableCollection<PasswordItem> Passwords { get; set; }
         public LocalizationManager Localization => LocalizationManager.Instance;
-        LocalizationManager language = new LocalizationManager();
 
         public ServerMessage Message { get; set; }
         public string DescryptionToken { get; set; }
@@ -101,7 +100,7 @@ namespace Client
                 {
                     if (PasswordList.ItemContainerGenerator.Status != GeneratorStatus.ContainersGenerated)
                     {
-                        await Task.Delay(50);
+                        await Task.Delay(500);
                         container = (ContentPresenter)PasswordList.ItemContainerGenerator.ContainerFromIndex(i);
                     }
                     if (container == null)
