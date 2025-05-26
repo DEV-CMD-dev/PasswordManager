@@ -101,7 +101,7 @@ public partial class MainWindow : Window
                 message = JsonSerializer.Deserialize<ServerMessage>(responseJson);
                 string response = message.Message;
 
-                string tokenPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "token.txt");
+                string tokenPath = "token.txt";
                 string token = "";
 
                 if (File.Exists(tokenPath))
