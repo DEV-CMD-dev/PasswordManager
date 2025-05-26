@@ -57,6 +57,53 @@ namespace Client
 
             DataContext = this;
         }
+
+        private async void UpdateAuthorizationData(PasswordItem password)
+        {
+            if (password is null)
+            {
+                return;
+            }
+            try
+            {
+                Message.Action = "UpdateAuthorizationData";
+                TcpClient client = new TcpClient();
+                client.Connect(Server);
+                var ns = client.GetStream();
+                StreamWriter sw = new StreamWriter(ns);
+                StreamReader sr = new StreamReader(ns);
+                var passwordHasher = new PasswordCryptor(DescryptionToken);
+                var passwordEncrypted = new Autorization_data
+                {
+                    Id = password.Id,
+                    Login = passwordHasher.EncryptPassword(password.User),
+                    Password = passwordHasher.EncryptPassword(password.Password),
+                    Site = password.Website,
+                    IsFavourite = password.IsFavorite,
+                    AccountId = Message.Account.Id
+                };
+                Message.Autorization_Data = new List<Autorization_data> { passwordEncrypted };
+                var json = JsonSerializer.Serialize(Message);
+                await sw.WriteLineAsync(json);
+                await sw.FlushAsync();
+                var responseJson = await sr.ReadLineAsync();
+                Message = JsonSerializer.Deserialize<ServerMessage>(responseJson);
+                if (Message != null && Message.Message == "OK")
+                {
+                    MessageBox.Show("Password updated successfully.");
+                    GetPasswords();
+                }
+                else
+                {
+                    MessageBox.Show("Error updating password.");
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Error updating password.");
+            }
+        }
+
         private void RemovePassword(Autorization_data password)
         {
             if (password is null)
@@ -265,6 +312,7 @@ namespace Client
             {
                 var decryptedPassword = new PasswordItem
                 {
+                    Id = password.Id,
                     User = passwordHasher.DecryptPassword(password.Login),
                     Password = passwordHasher.DecryptPassword(password.Password),
                     Website = password.Site,
