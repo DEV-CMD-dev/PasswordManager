@@ -74,7 +74,7 @@
 
         <StackPanel Grid.Row="5">
             <TextBlock HorizontalAlignment="Center">
-        <Hyperlink FontSize="16" TextDecorations="{x:Null}">
+        <Hyperlink Click="ForgotPasswordClick" FontSize="16" TextDecorations="{x:Null}">
             <Label>Forgot password?</Label>
         </Hyperlink>
             </TextBlock>

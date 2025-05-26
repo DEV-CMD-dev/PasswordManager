@@ -19,7 +19,6 @@ public partial class MainWindow : Window
     const string IP = "127.0.0.1";
     const int PORT = 4444;
     TcpClient client;
-    //HttpClient client;
     IPEndPoint server;
     public MainWindow()
     {
@@ -119,18 +118,6 @@ public partial class MainWindow : Window
                     window.Top = this.Top;
                     window.Show();
                     this.Close();
-                    /*if (message.Code2FA == code) // checking valid code
-                    {
-                        PasswordManagerWindow window = new PasswordManagerWindow(message, GetProcessorId());
-                        window.Show();
-                        this.Close();
-                        break;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Invalid 2FA code", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        break;
-                    }*/
                     break;
                 }
                 else if (response == "ERROR")
@@ -146,4 +133,12 @@ public partial class MainWindow : Window
         }
     }
 
+    private void ForgotPasswordClick(object sender, RoutedEventArgs e)
+    {
+        ForgotPassword forgotPassword = new ForgotPassword(server);
+        forgotPassword.Left = this.Left;
+        forgotPassword.Top = this.Top;
+        forgotPassword.Show();
+        this.Close();
+    }
 }
