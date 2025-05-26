@@ -100,9 +100,23 @@ public partial class MainWindow : Window
                 string responseJson = await sr.ReadLineAsync();
                 message = JsonSerializer.Deserialize<ServerMessage>(responseJson);
                 string response = message.Message;
+
+                string tokenPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "token.txt");
+                string token = "";
+
+                if (File.Exists(tokenPath))
+                {
+                    token = File.ReadAllText(tokenPath);
+                }
+                else
+                {
+                    token = "Unknown";
+                    MessageBox.Show("No token", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
                 if (response == "OK")
                 {
-                    PasswordManagerWindow passwordManager = new PasswordManagerWindow(message, GetProcessorId(), server); // token from file
+                    PasswordManagerWindow passwordManager = new PasswordManagerWindow(message, token, server); // token from file
                     passwordManager.Show();
 
                     //passwordManager.UpdateProfile(message);
@@ -113,7 +127,7 @@ public partial class MainWindow : Window
                 else if (response == "2FA")
                 {
                     // new window
-                    TwoStepVerification window = new TwoStepVerification(message, server, GetProcessorId());
+                    TwoStepVerification window = new TwoStepVerification(message, server, token);
                     window.Left = this.Left;
                     window.Top = this.Top;
                     window.Show();

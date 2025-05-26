@@ -49,10 +49,12 @@ namespace Client
             //AddImage("../../../account(1).png", message); // test
             // ChangePassword(message, "test"); // test
             //RemovePassword(Message.Autorization_Data[0]); // works, test
+
             InitializeInactivityTimer();
             HookUserActivity();
-            
-            
+
+
+
             DataContext = this;
         }
         private void RemovePassword(Autorization_data password)
@@ -168,15 +170,14 @@ namespace Client
 
         // timer
         private System.Timers.Timer inactivityTimer;
-        private readonly TimeSpan timeout = TimeSpan.FromMinutes(2);
+        private TimeSpan currentTimeout = TimeSpan.FromMinutes(2);
         //private readonly TimeSpan timeout = TimeSpan.FromSeconds(5);
 
         private void InitializeInactivityTimer()
         {
-            inactivityTimer = new System.Timers.Timer(timeout.TotalMilliseconds);
+            inactivityTimer = new System.Timers.Timer(currentTimeout.TotalMilliseconds);
             inactivityTimer.Elapsed += OnInactivityTimeout;
             inactivityTimer.AutoReset = false;
-            inactivityTimer.Start();
         }
 
         private void HookUserActivity()
@@ -187,8 +188,12 @@ namespace Client
 
         private void ResetInactivityTimer(object sender, EventArgs e)
         {
-            inactivityTimer.Stop();
-            inactivityTimer.Start();
+            if (AutoLockCheckBox.IsChecked == true)
+            {
+                inactivityTimer.Stop();
+                inactivityTimer.Interval = currentTimeout.TotalMilliseconds;
+                inactivityTimer.Start();
+            }
         }
 
         private void OnInactivityTimeout(object sender, ElapsedEventArgs e)
@@ -204,6 +209,23 @@ namespace Client
                 mainWindow.Show();
                 
             });
+        }
+
+        private void AutoLockTimeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (AutoLockTimeComboBox.SelectedItem is ComboBoxItem selectedItem &&
+                selectedItem.Tag is string tagString &&
+                int.TryParse(tagString, out int seconds))
+            {
+                currentTimeout = TimeSpan.FromSeconds(seconds);
+
+                if (AutoLockCheckBox.IsChecked == true)
+                {
+                    inactivityTimer.Stop();
+                    inactivityTimer.Interval = currentTimeout.TotalMilliseconds;
+                    inactivityTimer.Start();
+                }
+            }
         }
 
         public async Task<ObservableCollection<PasswordItem>> GetPasswordsAsync()
