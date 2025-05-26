@@ -28,12 +28,14 @@ namespace Client
         public IPEndPoint Server { get; set; }
         public string ProcessorId { get; set; }
         public int Counter { get; set; } = 0;
-        public TwoStepVerification(ServerMessage message, IPEndPoint server, string processorId)
+        public bool IsRecover { get; set; }
+        public TwoStepVerification(ServerMessage message, IPEndPoint server, string processorId, bool isRecover = false)
         {
             InitializeComponent();
             Message = message;
             Server = server;
             ProcessorId = processorId;
+            IsRecover = isRecover;
         }
 
         private async void SendAgain(object sender, RoutedEventArgs e)
@@ -91,11 +93,23 @@ namespace Client
                 string response = Message.Message;
                 if (response == "OK")
                 {
-                    PasswordManagerWindow window = new PasswordManagerWindow(Message, ProcessorId, Server);
-                    window.Left = this.Left;
-                    window.Top = this.Top;
-                    window.Show();
-                    this.Close();
+                    if (IsRecover)
+                    {
+                        SetNewPassword setNewPassword = new SetNewPassword(Message, Server);
+                        setNewPassword.Left = this.Left;
+                        setNewPassword.Top = this.Top;
+                        setNewPassword.Show();
+                        this.Close();
+                    }
+                    else
+                    {
+                        PasswordManagerWindow window = new PasswordManagerWindow(Message, ProcessorId, Server);
+                        window.Left = this.Left;
+                        window.Top = this.Top;
+                        window.Show();
+                        this.Close();
+                    }
+                        
                 }
                 else
                 {
