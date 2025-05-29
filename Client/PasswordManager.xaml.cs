@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Documents;
 using System.Collections.ObjectModel;
 using System.Windows.Controls.Primitives;
+using MaterialDesignThemes.Wpf;
 
 
 namespace Client
@@ -35,7 +36,6 @@ namespace Client
         public PasswordManagerWindow(ServerMessage message, string descryptionToken, IPEndPoint server)
         {
             InitializeComponent();
-            //DataContext = new MainViewModel();
             Message = message;
             PasswordList.ItemsSource = Passwords;
             DescryptionToken = descryptionToken;
@@ -46,12 +46,15 @@ namespace Client
             }
             Passwords = GetPasswords();
             UpdateProfile();
+
+            
             //AddImage("../../../account(1).png", message); // test
             // ChangePassword(message, "test"); // test
             //RemovePassword(Message.Autorization_Data[0]); // works, test
             InitializeInactivityTimer();
             HookUserActivity();
 
+            
             DataContext = this;
         }
         
@@ -651,7 +654,34 @@ namespace Client
 
         private void CheckStrength(object sender, RoutedEventArgs e)
         {
+            for (int i = 0; i < PasswordList.Items.Count; i++)
+            {
+                var container = PasswordList.ItemContainerGenerator.ContainerFromIndex(i) as ContentPresenter;
+                if (container == null)
+                {
+                    if (PasswordList.ItemContainerGenerator.Status != GeneratorStatus.ContainersGenerated)
+                        continue;
 
+                    container = PasswordList.ItemContainerGenerator.ContainerFromIndex(i) as ContentPresenter;
+                    if (container == null)
+                        continue;
+                }
+
+                container.ApplyTemplate();
+
+                var passwordBox = FindVisualChild<PasswordBox>(container);
+                var ratingBar = FindVisualChild<RatingBar>(container);
+                var item = container.DataContext as PasswordItem;
+
+                if (passwordBox != null && ratingBar != null)
+                {
+                    var strength = PasswordStrengthEvaluator.Evaluate(passwordBox.Password);
+                    PasswordStrengthEvaluator.SetStrengthStars(ratingBar, strength);
+                }
+            }
         }
+
+
     }
 }
+

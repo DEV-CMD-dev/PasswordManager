@@ -13,6 +13,7 @@
     <None Remove="account%282%29.png" />
     <None Remove="account.png" />
     <None Remove="email.png" />
+    <None Remove="key.png" />
     <None Remove="search.png" />
     <None Remove="UI\search.png" />
     <None Remove="user.png" />
@@ -30,6 +31,7 @@
     <Resource Include="account(2).png" />
     <Resource Include="account.png" />
     <Resource Include="email.png" />
+    <Resource Include="key.png" />
     <Resource Include="search.png" />
     <Resource Include="UI\search.png" />
     <Resource Include="user.png" />

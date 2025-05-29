@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using MaterialDesignThemes.Wpf;
+using System.Text.RegularExpressions;
 
 namespace Client.Security
 {
@@ -65,6 +66,31 @@ namespace Client.Security
             }
         }
         
+        public static void SetStrengthStars(RatingBar stars, PasswordStrength strength)
+        {
+            switch (strength)
+            {
+                case PasswordStrength.VeryWeak:
+                    stars.Value = 1;
+                    break;
+                case PasswordStrength.Weak:
+                    stars.Value = 2;
+                    break;
+                case PasswordStrength.Medium:
+                    stars.Value = 3;
+                    break;
+                case PasswordStrength.Strong:
+                    stars.Value = 4;
+                    break;
+                case PasswordStrength.VeryStrong:
+                    stars.Value = 5;
+                    break;
+                default:
+                    stars.Value = 0;
+                    break;
+            }
+        }
+
         public static string GetStrengthStars(PasswordStrength strength)
         {
             int stars = (int)strength;
