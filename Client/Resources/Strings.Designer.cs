@@ -160,7 +160,7 @@ namespace Client.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Apply cahnges.
+        ///   Looks up a localized string similar to Apply changes.
         /// </summary>
         internal static string ProfileApplyChangesButton {
             get {
@@ -192,6 +192,15 @@ namespace Client.Resources {
         internal static string ProfileCurrentPasswordTextBoxHint {
             get {
                 return ResourceManager.GetString("ProfileCurrentPasswordTextBoxHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email.
+        /// </summary>
+        internal static string ProfileEmail {
+            get {
+                return ResourceManager.GetString("ProfileEmail", resourceCulture);
             }
         }
         

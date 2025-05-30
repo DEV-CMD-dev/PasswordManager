@@ -85,6 +85,9 @@ namespace Server
                         case "RecoverPassword":
                             RecoverPassword(message, sw);
                             break;
+                        case "UpdateAuthorizationData":
+                            UpdateAuthorizationData(message, sw);
+                            break;
                         default:
                             Console.WriteLine("Unknown action: " + message.Action);
                             break;
@@ -98,6 +101,48 @@ namespace Server
                 Console.ResetColor();
             }
 
+        }
+
+        private async void UpdateAuthorizationData(ServerMessage message, StreamWriter sw)
+        {
+            try
+            {
+                var password = message.Autorization_Data.FirstOrDefault();
+                if (password != null)
+                {
+                    var passwordDb = db.Autorization_Data.Where(p => p.Id == password.Id && p.AccountId == password.AccountId).FirstOrDefault();
+                    if (passwordDb != null)
+                    {
+                        passwordDb.Site = password.Site;
+                        passwordDb.Login = password.Login;
+                        passwordDb.Password = password.Password;
+                        passwordDb.IsFavourite = password.IsFavourite;
+                        db.SaveChanges();
+                        message.Message = "OK";
+                        //message.Autorization_Data = db.Autorization_Data.Where(a => a.AccountId == message.Account.Id).ToList();
+                        string json = JsonSerializer.Serialize(message);
+                        await sw.WriteLineAsync(json);
+                        await sw.FlushAsync();
+                    }
+                    else
+                    {
+                        message.Message = "ERROR";
+                        string json = JsonSerializer.Serialize(message);
+                        await sw.WriteLineAsync(json);
+                        await sw.FlushAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error: " + ex.Message + "\nInner: " + ex.InnerException);
+                Console.ResetColor();
+                message.Message = "ERROR";
+                string json = JsonSerializer.Serialize(message);
+                await sw.WriteLineAsync(json);
+                await sw.FlushAsync();
+            }  
         }
 
         private async void RecoverPassword(ServerMessage message, StreamWriter sw)
