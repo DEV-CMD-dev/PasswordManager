@@ -49,7 +49,7 @@ namespace Client
             //AddImage("../../../account(1).png", message); // test
             // ChangePassword(message, "test"); // test
             //RemovePassword(Message.Autorization_Data[0]); // works, test
-
+            AddPassword("hi", "12345678", "test.com"); // works, test
             InitializeInactivityTimer();
             HookUserActivity();
 
@@ -58,7 +58,7 @@ namespace Client
             DataContext = this;
         }
 
-        private async void UpdateAuthorizationData(PasswordItem password)
+        private async void UpdateAuthorizationData(PasswordItem password) // update password in db
         {
             if (password is null)
             {
@@ -158,6 +158,7 @@ namespace Client
 
         private void UpdatePasswords()
         {
+            PasswordList.Items.Clear();
             foreach (var password in Passwords)
             {
                 PasswordList.Items.Add(password);
@@ -437,25 +438,11 @@ namespace Client
                 else if (PasswordList.Items.Contains(item))
                 {
                     PasswordList.Items.Remove(item);
-                    //RemovePassword()
-                    //PasswordCryptor passwordCryptor = new PasswordCryptor(DescryptionToken);
-                    //PasswordItem passwordEncrypted = new PasswordItem()
-                    //{
-                    //    Website = (((PasswordItem)item).Website),
-                    //    User = passwordCryptor.EncryptPassword(((PasswordItem)item).User),
-                    //    Password = passwordCryptor.EncryptPassword(((PasswordItem)item).Password)
-                    //};
-                    //foreach (var password in Message.Autorization_Data)
-                    //{
-                    //    if (password.Site == passwordEncrypted.Website &&
-                    //        password.Login == passwordEncrypted.User && // another login & password, error
-                    //        password.Password == passwordEncrypted.Password)
-                    //    {
-                    //        RemovePassword(password);
-                    //        break;
-                    //    }
-                    //}
-                    //not work
+                    Autorization_data pass = Message.Autorization_Data.FirstOrDefault(p => p.Id == ((PasswordItem)item).Id);
+                    if (pass != null)
+                    {
+                        RemovePassword(pass);
+                    }
                 }
                 else
                 {
@@ -725,6 +712,12 @@ namespace Client
             {
                 MessageBox.Show("Error change option 2FA.");
             }
+        }
+
+        private void RefreshPassword_Click(object sender, RoutedEventArgs e)
+        {
+            Passwords = GetPasswords();
+            UpdatePasswords();
         }
     }
 }
