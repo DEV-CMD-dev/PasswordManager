@@ -216,4 +216,7 @@
   <data name="GeneratePasswordIncludeSymbols" xml:space="preserve">
     <value>Включити спеціальні символи</value>
   </data>
+  <data name="ProfileEmail" xml:space="preserve">
+    <value>Електронна пошта</value>
+  </data>
 </root>
