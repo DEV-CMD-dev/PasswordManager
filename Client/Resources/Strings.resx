@@ -216,4 +216,7 @@
   <data name="GeneratePasswordIncludeSymbols" xml:space="preserve">
     <value>Include Symbols</value>
   </data>
+  <data name="ProfileEmail" xml:space="preserve">
+    <value>Email</value>
+  </data>
 </root>

@@ -196,6 +196,15 @@ namespace Client.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Email.
+        /// </summary>
+        internal static string ProfileEmail {
+            get {
+                return ResourceManager.GetString("ProfileEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Name.
         /// </summary>
         internal static string ProfileNameTextBoxHint {

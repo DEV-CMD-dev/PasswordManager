@@ -34,8 +34,7 @@ namespace Client.UI
         public string ProfileTitle => Resources.Strings.ProfileTitle;
         public string ProfilePersonalInfo => Resources.Strings.ProfilePersonalInformationTextBox;
         public string ProfileChangePassword => Resources.Strings.ProfileChangePasswordTextBox;
-        public string ProfileHintName => Resources.Strings.ProfileNameTextBoxHint;
-        public string ProfileHintSurname => Resources.Strings.ProfileSurnameTextBoxHint;
+        public string ProfileHintEmail => Resources.Strings.ProfileEmail;
         public string ProfileHintCurrentPassword => Resources.Strings.ProfileCurrentPasswordTextBoxHint;
         public string ProfileHintNewPassword => Resources.Strings.ProfileNewPasswordTextBoxHint;
         public string ProfileHintConfirmPassword => Resources.Strings.ProfileConfirmPasswordTextBoxHint;
