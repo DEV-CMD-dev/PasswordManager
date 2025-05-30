@@ -37,7 +37,7 @@ namespace Client
         {
             InitializeComponent();
             Message = message;
-            PasswordList.ItemsSource = Passwords;
+            //PasswordList.ItemsSource = Passwords;
             DescryptionToken = descryptionToken;
             Server = server;
             if (message.Account.Is2FAEnabled)
@@ -218,12 +218,9 @@ namespace Client
 
         private void UpdatePasswords()
         {
-            PasswordList.Items.Clear();
-            foreach (var password in Passwords)
-            {
-                PasswordList.Items.Add(password);
-            }
+            PasswordList.ItemsSource = Passwords;
             UpdatePasswordBoxes();
+            GetFavoriteList();
         }
 
         private async void UpdatePasswordBoxes()
@@ -503,13 +500,13 @@ namespace Client
         {
             if (sender is Button button && button.DataContext is object item)
             {
-                if (PasswordList.ItemsSource is System.Collections.IList list)
+                //if (PasswordList.ItemsSource is System.Collections.IList list)
+                //{
+                //    list.Remove(item);
+                //}
+                if (Passwords.Contains(item))
                 {
-                    list.Remove(item);
-                }
-                else if (PasswordList.Items.Contains(item))
-                {
-                    PasswordList.Items.Remove(item);
+                    Passwords.Remove(item as PasswordItem);
                     Autorization_data pass = Message.Autorization_Data.FirstOrDefault(p => p.Id == ((PasswordItem)item).Id);
                     if (pass != null)
                     {
@@ -789,6 +786,18 @@ namespace Client
         {
             Passwords = GetPasswords();
             UpdatePasswords();
+        }
+
+
+        public void GetFavoriteList()
+        {
+            List<PasswordItem> favoritePasswords = Passwords.Where(p => p.IsFavorite == true).ToList();
+            if (favoritePasswords?.Count == 0)
+            {
+                MessageBox.Show("You have no favorite passwords.");
+                return;
+            }
+            FavouriteList.ItemsSource = favoritePasswords;
         }
     }
 }
