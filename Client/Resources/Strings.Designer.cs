@@ -160,7 +160,7 @@ namespace Client.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Apply cahnges.
+        ///   Looks up a localized string similar to Apply changes.
         /// </summary>
         internal static string ProfileApplyChangesButton {
             get {
