@@ -15,6 +15,7 @@ namespace Server
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
+            
             optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["PasswordManager_db"].ConnectionString);
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
