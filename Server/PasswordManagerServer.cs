@@ -631,18 +631,21 @@ namespace Server
 
         private void Send2FAMessage(ServerMessage waiting_user)
         {
-            SmtpClient smtpClient = new SmtpClient("smtp.mailgun.org", 587);
-            string[] lines = File.ReadAllLines("../../../email.txt");
-            string login = lines[0];
-            string password = lines[1];
-            smtpClient.Credentials = new NetworkCredential(login, password);
+            string fromEmail = ConfigurationManager.AppSettings["smtpEmail"];
+            string appPassword = ConfigurationManager.AppSettings["smtpPassword"];
+
+            SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587);
+            smtpClient.Credentials = new NetworkCredential(fromEmail, appPassword);
             smtpClient.EnableSsl = true;
+
             MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress(login);
+            mailMessage.From = new MailAddress(fromEmail);
             mailMessage.To.Add(waiting_user.Account.Email);
-            mailMessage.Subject = "2FA code";
+            mailMessage.Subject = "Your 2FA code";
             mailMessage.Body = $"Your 2FA code is: {waiting_user.Code2FA}";
+
             smtpClient.Send(mailMessage);
         }
+
     }
 }

@@ -794,10 +794,10 @@ namespace Client
             List<PasswordItem> favoritePasswords = Passwords.Where(p => p.IsFavorite == true).ToList();
             if (favoritePasswords?.Count == 0)
             {
-                MessageBox.Show("You have no favorite passwords.");
+                //MessageBox.Show("You have no favorite passwords.");
                 return;
             }
-            FavouriteList.ItemsSource = favoritePasswords;
+            //FavouriteList.ItemsSource = favoritePasswords;
         }
     }
 }

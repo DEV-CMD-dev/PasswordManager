@@ -199,7 +199,7 @@
     <value>Мова</value>
   </data>
   <data name="GeneratePasswordTitle" xml:space="preserve">
-    <value>Генератор паролю</value>
+    <value>Генератор паролів</value>
   </data>
   <data name="GeneratePasswordLength" xml:space="preserve">
     <value>Довжина паролю</value>

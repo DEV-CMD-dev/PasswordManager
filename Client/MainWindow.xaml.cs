@@ -29,7 +29,7 @@ public partial class MainWindow : Window
 
         if (!File.Exists(tokenPath))
         {
-            MessageBox.Show("Token not found. Please register first.", "Access Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
+            //MessageBox.Show("Token not found. Please register first.", "Access Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
 
             tbLogin.IsEnabled = false;
             tbPassword.IsEnabled = false;

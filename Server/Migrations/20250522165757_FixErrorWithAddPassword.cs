@@ -10,8 +10,6 @@ namespace Server.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterDatabase(
-                collation: "SQL_Latin1_General_CP1_CS_AS");
 
             migrationBuilder.AlterColumn<string>(
                 name: "Password",

@@ -53,7 +53,7 @@ namespace Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Accounts");
+                    b.ToTable("Accounts", (string)null);
                 });
 
             modelBuilder.Entity("PasswordManager.Database.Autorization_data", b =>
@@ -86,7 +86,7 @@ namespace Server.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("Autorization_Data");
+                    b.ToTable("Autorization_Data", (string)null);
                 });
 
             modelBuilder.Entity("PasswordManager.Database.Autorization_data", b =>
